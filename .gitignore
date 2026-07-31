@@ -7,17 +7,16 @@ dist/
 build/
 target/
 
-# TypeScript
+# TypeScript/JavaScript
+*.js.map
 *.tsbuildinfo
-.next/
-.nuxt/
 
-# Environment variables
+# Environment
 .env
 .env.local
 *.env.*
 
-# IDE
+# Editors
 .vscode/
 .idea/
 *.swp
@@ -26,7 +25,7 @@ target/
 # Logs
 *.log
 
-# Temporary files
+# Temp files
 *.tmp
 
 # Coverage
@@ -34,7 +33,7 @@ coverage/
 htmlcov/
 .coverage
 
-# Python (in case Python files are added later)
+# Python (if present)
 __pycache__/
 *.pyc
 *.pyo
@@ -46,40 +45,40 @@ venv/
 pip-log.txt
 pip-delete-this-directory.txt
 .tox/
-.coverage
-.cache/
+.coverage*
+.cache
 nosetests.xml
 coverage.xml
 *.cover
-*.db
-*.sqlite
-*.sqlite3
+*.log
+.git/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# Java (if present)
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+.recommenders
+
+# C/C++ (if present)
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+*.obj
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Compiled JavaScript (if any JS files are added)
-*.js.map
-*.jsx.map
-*.ts.map
-*.tsx.map
-
-# Distribution / packaging
-*.tar.gz
-*.zip
-*.tgz
-*.bz2
-*.xz
-*.7z
-*.rar
-*.zst
-*.lz4
-*.lzh
-*.cab
-*.arj
-*.rpm
-*.deb
-*.Z
-*.lz
-*.lzo
-*.tar
 ```
