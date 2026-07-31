@@ -1,0 +1,25 @@
+{
+  "name": "shared-api",
+  "version": "1.0.0",
+  "description": "Shared models, types, and utilities for MERN stack projects",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "shared",
+    "models",
+    "api",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC"
+}

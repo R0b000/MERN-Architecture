@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Custom Styles */
+
+/* Button Utility Classes - Global */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium transition-all duration-200 cursor-pointer border-none;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn-success {
+  @apply bg-green-500 text-white hover:bg-green-600;
+}
+
+.btn-error {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+.btn-warning {
+  @apply bg-yellow-500 text-white hover:bg-yellow-600;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+.btn-small {
+  @apply px-2 py-1 text-xs;
+}
+
+.btn-medium {
+  @apply px-4 py-2 text-sm;
+}
+
+.btn-large {
+  @apply px-6 py-3 text-base;
+}
+
+.btn-disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.btn-full-width {
+  @apply w-full;
+}
+
+/* Layout Utilities */
+.flex-row {
+  @apply flex flex-row;
+}
+
+.flex-col {
+  @apply flex flex-col;
+}
+
+.grid-cols {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+/* Color Utilities */
+.bg-primary {
+  @apply bg-blue-500;
+}
+
+.text-primary {
+  @apply text-blue-500;
+}
+
+.bg-secondary {
+  @apply bg-gray-100;
+}
+
+.text-secondary {
+  @apply text-gray-600;
+}
+
+/* Card Component Styles */
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.card-header {
+  @apply border-b pb-4 mb-4;
+}
+
+.card-body {
+  @apply py-2;
+}
+
+.card-footer {
+  @apply border-t pt-4 mt-4;
+}
+
+/* Table Styles */
+.table-container {
+  @apply overflow-x-auto;
+}
+
+.table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.table-header {
+  @apply bg-gray-50;
+}
+
+.table-row {
+  @apply hover:bg-gray-50;
+}
+
+.table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+/* Form Styles */
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-error {
+  @apply text-red-500 text-sm mt-1;
+}
+
+/* Spinner */
+.spinner {
+  @apply animate-spin h-5 w-5 border-2 border-gray-200 border-t-blue-500 rounded-full;
+}
