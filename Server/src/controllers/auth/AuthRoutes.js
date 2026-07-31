@@ -1,20 +1,15 @@
-import { Router, Request, Response } from 'express';
-import { AuthService } from '../../services/implementation/AuthService';
-import { LoginRequest, RegisterRequest } from 'shared-api';
-import { AuthRequest } from '../../middleware/authMiddleware';
+const { Router } = require('express');
+const { AuthService } = require('../../services/implementation/AuthService');
+const { authMiddleware } = require('../../middleware/authMiddleware');
 
 const router = Router();
 const authService = new AuthService();
 
-/**
- * POST /api/auth/login
- * Authenticate user and return token
- */
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', async (req, res) => {
   try {
-    const loginData: LoginRequest = req.body;
+    const loginData = req.body;
     const response = await authService.login(loginData);
-    
+
     if (response.success) {
       res.status(200).json(response);
     } else {
@@ -24,20 +19,16 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       messages: ['Login failed'],
-      errors: [(error as Error).message],
+      errors: [error.message],
     });
   }
 });
 
-/**
- * POST /api/auth/register
- * Register a new user
- */
-router.post('/register', async (req: Request, res: Response): Promise<void> => {
+router.post('/register', async (req, res) => {
   try {
-    const registerData: RegisterRequest = req.body;
+    const registerData = req.body;
     const response = await authService.register(registerData);
-    
+
     if (response.success) {
       res.status(201).json(response);
     } else {
@@ -47,16 +38,12 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       messages: ['Registration failed'],
-      errors: [(error as Error).message],
+      errors: [error.message],
     });
   }
 });
 
-/**
- * GET /api/auth/profile
- * Get current user profile (protected route)
- */
-router.get('/profile', async (req: AuthRequest, res: Response): Promise<void> => {
+router.get('/profile', async (req, res) => {
   try {
     if (!req.user) {
       res.status(401).json({
@@ -67,7 +54,7 @@ router.get('/profile', async (req: AuthRequest, res: Response): Promise<void> =>
     }
 
     const response = await authService.getUserProfile(req.user.id);
-    
+
     if (response.success) {
       res.status(200).json(response);
     } else {
@@ -77,9 +64,9 @@ router.get('/profile', async (req: AuthRequest, res: Response): Promise<void> =>
     res.status(500).json({
       success: false,
       messages: ['Failed to get profile'],
-      errors: [(error as Error).message],
+      errors: [error.message],
     });
   }
 });
 
-export default router;
+module.exports = router;

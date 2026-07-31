@@ -1,19 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { Response as ApiResponse } from 'shared-api';
+const { Response: ApiResponse } = require('shared-api');
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+const errorHandler = (err, req, res, next) => {
   console.error(`[Error] ${new Date().toISOString()}:`, err);
 
-  // Default error response
   let statusCode = 500;
   let message = 'Internal server error';
 
-  // Handle specific error types
   if (err.name === 'ValidationError') {
     statusCode = 400;
     message = err.message;
@@ -31,3 +23,5 @@ export const errorHandler = (
   const errorResponse = ApiResponse.fail(message, [err.message], statusCode);
   res.status(statusCode).json(errorResponse);
 };
+
+module.exports = { errorHandler };
