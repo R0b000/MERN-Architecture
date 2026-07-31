@@ -1,13 +1,17 @@
+import { ReactNode } from 'react';
+
+export type ButtonType = 'default' | 'primary' | 'success' | 'error' | 'warning' | 'danger';
+export type ButtonSize = 'small' | 'medium' | 'large';
+
 export interface ButtonProps {
-  label: string;
-  variant?: 'primary' | 'success' | 'error' | 'warning' | 'secondary';
-  size?: 'small' | 'medium' | 'large';
+  children: ReactNode;
+  type?: ButtonType;
+  size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
-  fullWidth?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
+  htmlType?: 'button' | 'submit' | 'reset';
+  icon?: ReactNode;
+  block?: boolean;
 }

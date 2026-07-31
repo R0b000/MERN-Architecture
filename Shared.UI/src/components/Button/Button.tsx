@@ -1,40 +1,36 @@
 import React from 'react';
-import { ButtonProps } from './Button.types';
 import './Button.css';
+import { ButtonProps } from './Button.types';
 
 export const Button: React.FC<ButtonProps> = ({
-  label,
-  variant = 'primary',
+  children,
+  type = 'default',
   size = 'medium',
   disabled = false,
   loading = false,
   onClick,
   className = '',
-  type = 'button',
-  fullWidth = false,
+  htmlType = 'button',
   icon,
-  iconPosition = 'left',
+  block = false,
 }) => {
-  const baseClasses = 'btn';
-  const variantClasses = `btn-${variant}`;
-  const sizeClasses = `btn-${size}`;
-  const disabledClasses = disabled ? 'btn-disabled' : '';
-  const loadingClasses = loading ? 'btn-loading' : '';
-  const widthClasses = fullWidth ? 'btn-full-width' : '';
-
-  const buttonClasses = `${baseClasses} ${variantClasses} ${sizeClasses} ${disabledClasses} ${loadingClasses} ${widthClasses} ${className}`.trim();
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled || loading) return;
+    onClick?.(e);
+  };
 
   return (
     <button
-      type={type}
-      className={buttonClasses}
+      type={htmlType}
+      className={`btn btn-${type} btn-${size} ${className} ${block ? 'btn-block' : ''} ${disabled || loading ? 'btn-disabled' : ''}`}
       disabled={disabled || loading}
-      onClick={onClick}
+      onClick={handleClick}
     >
-      {loading && <span className="btn-spinner"></span>}
-      {icon && iconPosition === 'left' && <span className="btn-icon">{icon}</span>}
-      <span className="btn-label">{label}</span>
-      {icon && iconPosition === 'right' && <span className="btn-icon">{icon}</span>}
+      {loading && <span className="btn__spinner"></span>}
+      {icon && <span className="btn__icon">{icon}</span>}
+      <span className="btn__text">{children}</span>
     </button>
   );
 };
+
+export default Button;

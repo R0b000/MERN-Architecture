@@ -1,0 +1,36 @@
+.card {
+  background: white;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.card-bordered {
+  border: 1px solid #d9d9d9;
+}
+
+.card-hoverable:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.card__extra {
+  color: #1890ff;
+}
+
+.card__body {
+  padding: 16px;
+}
