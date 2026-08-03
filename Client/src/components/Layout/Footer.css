@@ -1,0 +1,43 @@
+.footer {
+  @apply bg-gray-900 text-white mt-auto;
+}
+
+.footer-container {
+  @apply max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8;
+}
+
+.footer-section {
+  @apply space-y-4;
+}
+
+.footer-title {
+  @apply text-2xl font-bold text-blue-400;
+}
+
+.footer-subtitle {
+  @apply text-lg font-semibold mb-3;
+}
+
+.footer-text {
+  @apply text-gray-400 leading-relaxed;
+}
+
+.footer-links {
+  @apply space-y-2;
+}
+
+.footer-links a {
+  @apply text-gray-400 hover:text-white transition-colors block;
+}
+
+.footer-social {
+  @apply flex gap-4 text-2xl;
+}
+
+.footer-social a {
+  @apply hover:scale-110 transition-transform;
+}
+
+.footer-bottom {
+  @apply border-t border-gray-800 py-6 text-center text-gray-400;
+}

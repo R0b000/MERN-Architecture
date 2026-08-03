@@ -1,0 +1,7 @@
+.admin-banner-container {
+  @apply p-6;
+}
+
+.admin-banner-header {
+  @apply flex justify-between items-center mb-6;
+}

@@ -1,0 +1,37 @@
+.header {
+  @apply bg-white shadow-md sticky top-0 z-50;
+}
+
+.header-container {
+  @apply max-w-7xl mx-auto px-4 py-4 flex items-center justify-between;
+}
+
+.header-logo {
+  @apply text-xl font-bold hover:opacity-80 transition-opacity;
+}
+
+.header-nav {
+  @apply hidden md:flex items-center gap-6;
+}
+
+.header-link {
+  @apply text-gray-700 hover:text-blue-600 transition-colors font-medium;
+}
+
+.header-actions {
+  @apply flex items-center gap-4;
+}
+
+.header-cart {
+  @apply text-2xl hover:scale-110 transition-transform;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    @apply flex-wrap;
+  }
+
+  .header-nav {
+    @apply order-3 w-full mt-4 justify-center gap-4;
+  }
+}

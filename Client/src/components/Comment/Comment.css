@@ -1,0 +1,28 @@
+.comment-container {
+  @apply max-w-4xl mx-auto;
+}
+
+.comment-header {
+  @apply flex justify-between items-center mb-6;
+}
+
+.comment-form {
+  @apply bg-gray-50 rounded-lg;
+}
+
+.comment-list {
+  @apply space-y-4;
+}
+
+.comment-item {
+  @apply p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow;
+}
+
+.comment-loading,
+.comment-error {
+  @apply text-center py-8 text-gray-500;
+}
+
+.comment-error {
+  @apply text-red-500;
+}
