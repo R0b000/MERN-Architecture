@@ -1,23 +1,9 @@
-import mongoose from 'mongoose';
-import Redis from 'ioredis';
-import { v2 as cloudinary } from 'cloudinary';
-import dotenv from 'dotenv';
+const mongoose = require('mongoose');
+const Redis = require('ioredis');
+const { v2: cloudinary } = require('cloudinary');
+require('dotenv').config();
 
-dotenv.config();
-
-interface IConfig {
-  MONGODB_URI: string;
-  REDIS_HOST: string;
-  REDIS_PORT: number;
-  REDIS_PASSWORD?: string;
-  CLOUDINARY_CLOUD_NAME: string;
-  CLOUDINARY_API_KEY: string;
-  CLOUDINARY_API_SECRET: string;
-  NODE_ENV: string;
-  PORT: number;
-}
-
-const config: IConfig = {
+const config = {
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce',
   REDIS_HOST: process.env.REDIS_HOST || 'localhost',
   REDIS_PORT: parseInt(process.env.REDIS_PORT || '6379', 10),
@@ -30,9 +16,9 @@ const config: IConfig = {
 };
 
 // MongoDB Connection
-let mongoConnection: typeof mongoose | null = null;
+let mongoConnection = null;
 
-export const connectMongoDB = async (): Promise<typeof mongoose> => {
+const connectMongoDB = async () => {
   if (mongoConnection) {
     console.log('✅ MongoDB already connected');
     return mongoConnection;
@@ -72,14 +58,14 @@ export const connectMongoDB = async (): Promise<typeof mongoose> => {
 };
 
 // Redis Connection
-let redisClient: Redis | null = null;
+let redisClient = null;
 
-export const getRedisClient = (): Redis => {
+const getRedisClient = () => {
   if (redisClient) {
     return redisClient;
   }
 
-  const redisOptions: Redis.RedisOptions = {
+  const redisOptions = {
     host: config.REDIS_HOST,
     port: config.REDIS_PORT,
     maxRetriesPerRequest: 3,
@@ -117,7 +103,7 @@ export const getRedisClient = (): Redis => {
 };
 
 // Cloudinary Configuration
-export const configureCloudinary = (): void => {
+const configureCloudinary = () => {
   if (!config.CLOUDINARY_CLOUD_NAME || !config.CLOUDINARY_API_KEY || !config.CLOUDINARY_API_SECRET) {
     console.warn('⚠️ Cloudinary credentials not fully configured. Image uploads may fail.');
     return;
@@ -132,12 +118,12 @@ export const configureCloudinary = (): void => {
   console.log('✅ Cloudinary Configured');
 };
 
-export const getCloudinary = () => {
+const getCloudinary = () => {
   return cloudinary;
 };
 
 // Initialize all services
-export const initializeServices = async (): Promise<void> => {
+const initializeServices = async () => {
   try {
     await connectMongoDB();
     getRedisClient();
@@ -149,4 +135,11 @@ export const initializeServices = async (): Promise<void> => {
   }
 };
 
-export default config;
+module.exports = {
+  default: config,
+  connectMongoDB,
+  getRedisClient,
+  configureCloudinary,
+  getCloudinary,
+  initializeServices,
+};

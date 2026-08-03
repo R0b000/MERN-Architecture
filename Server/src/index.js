@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const { initializeServices } = require('./config');
 const { errorHandler } = require('./middleware/errorHandler');
 const { authMiddleware } = require('./middleware/authMiddleware');
 const { requestLogger } = require('./middleware/requestLogger');
@@ -15,6 +16,16 @@ const authRoutes = require('./controllers/auth/AuthRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Initialize database and services
+initializeServices()
+  .then(() => {
+    console.log('✓ All services initialized successfully');
+  })
+  .catch((err) => {
+    console.error('✗ Failed to initialize services:', err);
+    process.exit(1);
+  });
 
 app.use(helmet());
 app.use(cors({
