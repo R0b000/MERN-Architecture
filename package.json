@@ -1,0 +1,25 @@
+{
+  "name": "mern-architecture",
+  "version": "1.0.0",
+  "description": "MERN Stack Monorepo - Shared modules, Auth, and E-Commerce projects",
+  "private": true,
+  "workspaces": [
+    "Shared.API",
+    "Shared.UI",
+    "Auth.Server",
+    "Auth.Client",
+    "E.API",
+    "E.UI"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w e-ui",
+    "dev:api": "npm run dev -w e-api",
+    "build": "npm run build -w shared-ui",
+    "lint": "npm run lint -w e-ui",
+    "typecheck": "npm run typecheck -w shared-api"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

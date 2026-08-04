@@ -1,0 +1,3 @@
+.home-container {
+  @apply -columns min-h-screen;
+}
