@@ -4,15 +4,46 @@
 
 ```
 ProjectRoot/
-├── Shared.UI/          # Global reusable UI components (React/TSX)
-├── Shared.API/         # Global API utilities, helpers, wrappers
-├── Server/             # Core backend logic (Node.js/Express)
-│   ├── Auth.Server/    # Authentication domain
-│   └── HRM.Server/     # HR Management domain
-└── Client/             # Core frontend logic (React/TSX)
-    ├── Auth.Client/    # Authentication domain
-    └── HRM.Client/     # HR Management domain
+├── package.json            # Root workspace config (npm workspaces)
+├── Shared.API/             # Global shared utilities, wrappers, and models (JS + TS types)
+│   └── models/Auth/        # Auth DTOs (entities, requests, responses) — shared by UI & API
+├── Shared.UI/              # Global reusable UI components (React/TSX)
+├── Auth.Server/            # Shared Auth backend (Node.js) — reusable across API projects
+│   ├── models/             # Mongoose schemas
+│   ├── repositories/       # Data access (interfaces + implementations)
+│   ├── services/           # Business logic (interfaces + implementations)
+│   ├── controllers/        # Express routers
+│   ├── middleware/         # JWT auth middleware
+│   └── database/           # MongoDB connection helper
+├── Auth.Client/            # Shared Auth frontend (React/TSX) — reusable across UI projects
+│   ├── components/         # Auth forms, providers
+│   ├── hooks/              # Auth hooks (useAuth, useLogin, etc.)
+│   └── services/           # Auth API service + route constants
+├── E.API/                  # E-commerce API (Node.js/Express) — consumes Auth.Server
+│   ├── config/             # App config
+│   ├── middleware/         # Error handler, request logger, auth (from Auth.Server)
+│   ├── models/             # E-commerce Mongoose schemas (e.g. Product)
+│   ├── repositories/       # Data access
+│   ├── services/           # Business logic
+│   ├── routes/             # API routes (auth + e-commerce)
+│   └── database/           # MongoDB connection
+└── E.UI/                   # E-commerce frontend (React/TSX) — consumes Auth.Client
+    ├── pages/              # Page components (3-file structure)
+    ├── routes/             # React Router configuration
+    ├── context/            # HttpService context
+    ├── services/           # HttpService, ProductService
+    └── styles/             # Global CSS (Tailwind)
 ```
+
+### Reusability
+
+Auth is a shared layer with no project-specific dependencies:
+- **Auth.Server** is consumed via `const { authRouter } = require('auth-server')` and mounted at `/api/auth`.
+- **Auth.Client** is consumed via `<AuthProvider>` + `useAuth()` hook.
+- **E.API** mounts Auth.Server's router and adds e-commerce routes.
+- **E.UI** wraps its app in AuthProvider and adds e-commerce pages.
+
+Additional projects (e.g. a blog, CRM) can `npm install auth-server auth-client` and reuse authentication without duplicating code.
 
 ---
 

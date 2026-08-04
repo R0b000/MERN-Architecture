@@ -1,5 +1,5 @@
 {
-  "name": "@shared/ui",
+  "name": "shared-ui",
   "version": "1.0.0",
   "description": "Shared UI components library for MERN stack applications",
   "main": "dist/index.js",
