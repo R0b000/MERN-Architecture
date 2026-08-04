@@ -1,1 +1,4 @@
-Nothing needs to be added to .gitignore since the only modified file is a TypeScript source file (.ts) which should not be ignored.
+```
+# Build artifacts
+E.UI/dist/
+```
