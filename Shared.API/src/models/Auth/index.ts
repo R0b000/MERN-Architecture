@@ -10,3 +10,5 @@ export type { ResetPasswordRequest } from './requests/ResetPasswordRequest';
 export type { LoginResponse } from './responses/LoginResponse';
 export type { RegisterResponse } from './responses/RegisterResponse';
 export type { UserProfileResponse } from './responses/UserProfileResponse';
+
+export { AuthRoutes } from './routes/AuthRoutes';

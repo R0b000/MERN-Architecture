@@ -1,39 +1,14 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import type { IResponse } from 'shared-api';
 import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserProfileResponse } from 'shared-api';
-import { AuthRoutes } from './AuthRoutes';
+import { AuthRoutes } from 'shared-api';
+import { createAuthApiClient } from 'shared-api/services/AuthApiClient';
 
 class AuthAPIService {
   private api: AxiosInstance;
 
   constructor(baseURL: string = '') {
-    this.api = axios.create({
-      baseURL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    this.api.interceptors.request.use(
-      (config) => {
-        const token = localStorage.getItem('authToken');
-        if (token && config.headers) {
-          config.headers.set('Authorization', `Bearer ${token}`);
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    this.api.interceptors.response.use(
-      (response: AxiosResponse<IResponse<unknown>>) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          localStorage.removeItem('authToken');
-        }
-        return Promise.reject(error);
-      }
-    );
+    this.api = createAuthApiClient(baseURL);
   }
 
   async login(request: LoginRequest): Promise<IResponse<LoginResponse>> {

@@ -1,3 +1,7 @@
+/**
+ * Authentication Routes Configuration
+ * All API endpoints for authentication operations
+ */
 export const AuthRoutes = {
   LOGIN: '/api/auth/login',
   REGISTER: '/api/auth/register',
