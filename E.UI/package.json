@@ -10,13 +10,14 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "auth-client": "file:../Auth.Client",
+    "axios": "^1.6.2",
+    "framer-motion": "^12.43.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
-    "axios": "^1.6.2",
-    "shared-ui": "file:../Shared.UI",
     "shared-api": "file:../Shared.API",
-    "auth-client": "file:../Auth.Client"
+    "shared-ui": "file:../Shared.UI"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
