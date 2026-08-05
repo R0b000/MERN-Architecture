@@ -7,6 +7,7 @@ const useLoginLogic = () => {
   const navigate = useNavigate();
   const { login, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     setError(null);
@@ -18,7 +19,9 @@ const useLoginLogic = () => {
     }
   };
 
-  return { handleLogin, isLoading, error };
+  const toggleMode = () => setIsSignUp(!isSignUp);
+
+  return { handleLogin, isLoading, error, isSignUp, toggleMode };
 };
 
 export default useLoginLogic;
