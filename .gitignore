@@ -1,68 +1,81 @@
-# ==========================================
-# Dependencies & Package Managers
-# ==========================================
+```
+# Dependencies
 node_modules/
-/.pnp
-.pnp.js
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+**/node_modules/
 
-# ==========================================
-# Environment Variables & Secrets (CRITICAL)
-# ==========================================
+# Build outputs
+dist/
+build/
+target/
+coverage/
+htmlcov/
+
+# Package lock files (already tracked in your changes)
+# package-lock.json
+# yarn.lock
+
+# Environment variables
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*.pem
+.env.*
 
-# ==========================================
-# Frontend Builds (React / Vite / Next.js)
-# ==========================================
-/client/build/
-/client/dist/
-/client/out/
-/build/
-/dist/
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 
-# ==========================================
-# Logs & Debugging
-# ==========================================
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
 
-# ==========================================
-# Database & Storage
-# ==========================================
-*.db
-*.sqlite
-*.sqlite3
-/uploads/
-/public/uploads/
-
-# ==========================================
-# IDEs, Editors & OS Files
-# ==========================================
-.vscode/*
-!.vscode/extensions.json
+# IDE specific
+.vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+*.swp
+*.swo
+
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# ==========================================
-# Testing & Coverage
-# ==========================================
-/coverage/
-/.nyc_output/
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Testing
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+```

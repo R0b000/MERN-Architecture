@@ -12,7 +12,7 @@ const { errorHandler } = require('./middleware/errorHandler');
 const { requestLogger } = require('./middleware/requestLogger');
 const { authMiddleware } = require('./middleware/authMiddleware');
 const apiRoutes = require('./routes');
-const { connectDatabase } = require('./database/connect');
+const { connectDatabase } = require('./config/Database.config');
 
 const app = express();
 const PORT = config.port;
