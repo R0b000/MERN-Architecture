@@ -7,13 +7,14 @@ while ! nc -z mongodb 27017; do
 done
 echo "MongoDB is ready!"
 
-if [ ! -d "/app/node_modules" ]; then
-  echo "Installing dependencies..."
-  rm -f package-lock.json
-  npm install --include=dev --omit=optional
-  npm install @rollup/rollup-linux-x64-musl --no-save
-else
-  echo "node_modules exists, skipping install"
+echo "Installing dependencies..."
+rm -f package-lock.json
+npm install --include=dev --omit=optional
+npm install @rollup/rollup-linux-x64-musl --no-save
+
+if [ ! -d "/app/Shared.API/dist" ]; then
+  echo "Building shared-api workspace package..."
+  npm run build -w shared-api
 fi
 
 echo "Starting E.API backend..."
