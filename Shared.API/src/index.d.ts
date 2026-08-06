@@ -6,3 +6,6 @@ export declare class Response {
 }
 
 export type * from './models';
+
+export { createAuthApiClient } from './services/AuthApiClient';
+export { AuthRoutes } from './models/Auth';

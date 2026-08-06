@@ -2,7 +2,8 @@
   "name": "shared-api",
   "version": "1.0.0",
   "description": "Shared models, types, and utilities for MERN stack projects",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc",

@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import type { IResponse } from 'shared-api';
 import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserProfileResponse } from 'shared-api';
-import { AuthRoutes } from 'shared-api';
-import { createAuthApiClient } from 'shared-api/services/AuthApiClient';
+import { AuthRoutes, createAuthApiClient } from 'shared-api';
 
 class AuthAPIService {
   private api: AxiosInstance;
