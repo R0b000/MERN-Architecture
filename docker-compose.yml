@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: mern-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  app:
+    build: .
+    container_name: mern-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "5000:5000"
+    volumes:
+      - ./:/app
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/e-commerce
+      - JWT_SECRET=your-jwt-secret-key-here
+      - JWT_EXPIRES_IN=24h
+      - CLIENT_URL=http://localhost:3000
+      - NODE_ENV=development
+      - VITE_HOST=0.0.0.0
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
