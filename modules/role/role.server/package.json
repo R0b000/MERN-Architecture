@@ -1,0 +1,7 @@
+{
+  "name": "role-server",
+  "version": "1.0.0",
+  "description": "Role management backend module",
+  "main": "src/index.ts",
+  "private": true
+}

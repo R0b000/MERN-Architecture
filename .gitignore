@@ -1,4 +1,3 @@
-```
 # Dependencies
 node_modules/
 **/node_modules/
@@ -78,4 +77,11 @@ coverage.xml
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
+
+# Legacy directories (do not remove - managed by package manager)
+Shared.API/
+Shared.UI/
+Auth.Server/
+Auth.Client/
+E.API/
+E.UI/

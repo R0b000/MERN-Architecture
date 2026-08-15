@@ -1,0 +1,28 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "Universal shared layer - contracts, types, schemas, DTOs, and constants for MERN stack",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.2",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "shared",
+    "types",
+    "schemas",
+    "contracts",
+    "mern",
+    "monorepo"
+  ],
+  "license": "MIT"
+}

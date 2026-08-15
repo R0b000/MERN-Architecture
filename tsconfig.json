@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "shared": ["./shared/src/index.ts"],
+      "shared/*": ["./shared/src/*"],
+      "shared.client": ["./shared.client/src/index.ts"],
+      "shared.client/*": ["./shared.client/src/*"],
+      "shared.server": ["./shared.server/src/index.ts"],
+      "shared.server/*": ["./shared.server/src/*"]
+    }
+  },
+  "include": [
+    "shared/**/*.ts",
+    "shared.client/**/*.ts",
+    "shared.client/**/*.tsx",
+    "shared.server/**/*.ts",
+    "modules/**/*.ts",
+    "modules/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

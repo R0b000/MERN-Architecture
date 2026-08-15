@@ -4,19 +4,20 @@
   "description": "MERN Stack Monorepo - Shared modules, Auth, and E-Commerce projects",
   "private": true,
   "workspaces": [
-    "Shared.API",
-    "Shared.UI",
-    "Auth.Server",
-    "Auth.Client",
-    "E.API",
-    "E.UI"
+    "shared",
+    "shared.client",
+    "shared.server",
+    "modules/auth/auth.server",
+    "modules/auth/auth.client",
+    "modules/ecommerce/ecommerce.server",
+    "modules/ecommerce/ecommerce.client"
   ],
   "scripts": {
-    "dev": "npm run dev -w e-ui",
-    "dev:api": "npm run dev -w e-api",
-    "build": "npm run build -w shared-api && npm run build -w shared-ui",
-    "lint": "npm run lint -w e-ui",
-    "typecheck": "npm run typecheck -w shared-api"
+    "dev": "npm run dev -w ecommerce-client",
+    "dev:api": "npm run dev -w ecommerce-server",
+    "build": "npm run build -w shared && npm run build -w shared.server && npm run build -w shared.client",
+    "lint": "npm run lint -w ecommerce-client",
+    "typecheck": "npm run build -w shared && npm run build -w shared.server"
   },
   "engines": {
     "node": ">=18.0.0",

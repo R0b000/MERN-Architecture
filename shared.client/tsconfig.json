@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "baseUrl": "."
+  },
+  "include": [
+    "index.ts",
+    "components/**/*",
+    "config/**/*",
+    "context/**/*",
+    "hooks/**/*",
+    "http/**/*",
+    "router/**/*",
+    "utils/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

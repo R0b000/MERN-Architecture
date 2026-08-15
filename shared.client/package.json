@@ -1,0 +1,37 @@
+{
+  "name": "shared.client",
+  "version": "1.0.0",
+  "description": "Frontend core - UI primitives, API client, hooks, router for MERN stack",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext ts,tsx"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "socket.io-client": "^4.7.0",
+    "zod": "^3.23.8",
+    "shared": "file:../shared"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.2"
+  },
+  "keywords": [
+    "client",
+    "ui",
+    "components",
+    "hooks",
+    "mern",
+    "shared"
+  ],
+  "license": "MIT"
+}

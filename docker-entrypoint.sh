@@ -12,16 +12,17 @@ rm -f package-lock.json
 npm install --include=dev --omit=optional
 npm install @rollup/rollup-linux-x64-musl --no-save
 
-if [ ! -d "/app/Shared.API/dist" ]; then
-  echo "Building shared-api workspace package..."
-  npm run build -w shared-api
+if [ ! -d "/app/shared/dist" ]; then
+  echo "Building shared workspace packages..."
+  npm run build -w shared
+  npm run build -w shared.client
 fi
 
-echo "Starting E.API backend..."
+echo "Starting ecommerce-server backend..."
 npm run dev:api &
 API_PID=$!
 
-echo "Starting E.UI frontend..."
+echo "Starting ecommerce-client frontend..."
 npm run dev &
 UI_PID=$!
 

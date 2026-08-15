@@ -1,0 +1,7 @@
+{
+  "name": "user-client",
+  "version": "1.0.0",
+  "description": "User management frontend module",
+  "main": "src/index.ts",
+  "private": true
+}
