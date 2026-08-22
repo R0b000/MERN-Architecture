@@ -1,13 +1,24 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { RegisterForm } from '../register/RegisterForm';
 import { useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {
-  const { register, error, isPending } = useAuth();
+  const { register } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (data: { email: string; password: string; firstName: string; lastName: string }) => {
-    await register(data);
+    setIsPending(true);
+    setError(null);
+    try {
+      await register(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (

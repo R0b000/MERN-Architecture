@@ -10,10 +10,38 @@
     "Shared/UI"
   ],
   "scripts": {
-    "start": "pnpm --filter ./auth.client dev",
-    "start:api": "pnpm --filter ./auth.server start",
-    "dev": "pnpm --filter ./auth.client dev",
-    "dev:api": "pnpm --filter ./auth.server start"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "dev:api": "node --watch index.js",
+    "start:api": "node index.js",
+    "dev:auth": "pnpm --filter ./auth.client dev",
+    "dev:auth-api": "pnpm --filter ./auth.server start"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "axios": "^1.6.0",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "express-rate-limit": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/node": "^20.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.2.0",
+    "vite": "^5.0.0",
+    "tailwindcss": "^3.3.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0"
   },
   "engines": {
     "node": ">=18.0.0",

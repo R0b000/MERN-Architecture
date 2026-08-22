@@ -6,9 +6,9 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-const { config } = require('../Shared/API/config/config');
-const { connectDatabase } = require('../Shared/API/config/Database.config');
-const {authRouter} = require('auth.server/controllers/AuthController')
+const { config } = require('./Shared/API/config/config');
+const { connectDatabase } = require('./Shared/API/config/Database.config');
+const {authRouter} = require('./auth.server/controllers/AuthController');
 
 const app = express();
 const PORT = config.port || process.env.PORT || 5001;

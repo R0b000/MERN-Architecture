@@ -1,13 +1,24 @@
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { LoginForm } from '../login/LoginForm';
 import { useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
-  const { login, error, isPending } = useAuth();
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (credentials: { email: string; password: string }) => {
-    await login(credentials);
+    setIsPending(true);
+    setError(null);
+    try {
+      await login(credentials);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
