@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
 import { LoginCredentials } from '../models/config/appConfig';
+import type { LoginResponse } from '../models/responses/AuthResponseMode';
 
 export const useLogin = () => {
   const [data, setData] = useState<LoginResponse | null>(null);

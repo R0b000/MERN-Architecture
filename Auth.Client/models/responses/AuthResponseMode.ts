@@ -9,3 +9,12 @@ export interface RegisterResponse {
   userId: string;
   message: string;
 }
+export interface UserProfileResponse {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  isActive: boolean;
+  createdAt: string;
+}

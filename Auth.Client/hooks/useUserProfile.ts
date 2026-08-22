@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
+import type { User } from '../models/config/User';
+import type { UserProfileResponse } from '../models/responses/AuthResponseMode';
 
 export const useUserProfile = () => {
   const [user, setUser] = useState<User | null>(null);

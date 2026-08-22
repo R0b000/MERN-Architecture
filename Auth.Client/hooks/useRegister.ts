@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
 import { RegisterData } from '../models/config/appConfig';
+import type { RegisterResponse } from '../models/responses/AuthResponseMode';
 
 export const useRegister = () => {
   const [data, setData] = useState<RegisterResponse | null>(null);
