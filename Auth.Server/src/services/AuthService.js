@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Response } = require('shared-api');
-const { AuthRepository } = require('../../repositories/implementations/AuthRepository');
-const { config } = require('../../config');
+const { AuthRepository } = require('../repositories/implementations/AuthRepository');
+const { config } = require('../config/config');
 
 class AuthService {
   constructor() {

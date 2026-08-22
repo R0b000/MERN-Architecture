@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { IResponse } from '../wrappers/IResponse';
+import { IResponse } from '../../wrappers/IResponse';
 
 /**
  * Creates an Axios instance with authentication interceptors

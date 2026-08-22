@@ -164,7 +164,7 @@ const Register = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={handleRegister}
+                  onClick={() => handleRegister({ email: '', password: '', firstName: '', lastName: '' })}
                   disabled={isLoading}
                   className="w-full bg-red-600 text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >

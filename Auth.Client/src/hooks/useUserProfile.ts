@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import type { User } from 'shared-api';
-import type { UserProfileResponse } from 'shared-api';
 
 export const useUserProfile = () => {
   const [user, setUser] = useState<User | null>(null);

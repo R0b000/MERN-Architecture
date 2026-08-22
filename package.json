@@ -14,6 +14,7 @@
   "scripts": {
     "dev": "npm run dev -w e-ui",
     "dev:api": "npm run dev -w e-api",
+    "dev:auth": "npm run dev -w auth-server",
     "build": "npm run build -w shared-ui",
     "lint": "npm run lint -w e-ui",
     "typecheck": "npm run typecheck -w shared-api"

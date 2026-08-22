@@ -5,3 +5,7 @@ export interface LoginResponse {
   user: User;
   expiresIn: number;
 }
+export interface RegisterResponse {
+  userId: string;
+  message: string;
+}

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { Response: ApiResponse } = require('shared-api');
-const { config } = require('../config');
+const { config } = require('../config/config');
 
 const authMiddleware = (req, res, next) => {
   try {

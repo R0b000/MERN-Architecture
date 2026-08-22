@@ -1,12 +1,16 @@
 import axios, { AxiosInstance } from 'axios';
-import type { IResponse } from 'shared-api';
-import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserProfileResponse } from 'shared-api';
+import { AuthRoutes } from '../routes/AuthRoutes';
 
 class AuthAPIService {
   private api: AxiosInstance;
 
   constructor(baseURL: string = '') {
-    this.api = apiConfig(baseURL);
+    this.api = axios.create({
+      baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 
   async login(request: LoginRequest): Promise<IResponse<LoginResponse>> {
