@@ -5,6 +5,7 @@ export interface MenuItemProps {
   children: ReactNode;
   onClick?: () => void;
   className?: string;
+  active?: boolean;
 }
 
 export interface SubMenuProps {

@@ -1,6 +1,7 @@
-import type { User } from 'shared-api';
+import { User } from "./User";
 
-export type { User };
+
+export type Role = 'user' | 'admin' | 'moderator';
 
 export interface AuthState {
   user: User | null;

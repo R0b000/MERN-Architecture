@@ -1,4 +1,4 @@
-import type { LoginCredentials } from '../types';
+import { LoginCredentials } from "@/models/config/appConfig";
 
 export interface LoginFormProps {
   onSubmit?: (credentials: LoginCredentials) => void;

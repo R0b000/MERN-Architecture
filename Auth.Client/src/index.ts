@@ -13,4 +13,4 @@ export { useResetPassword } from './hooks/useResetPassword';
 export { AuthAPIService, authAPIService } from './services/AuthAPIService';
 
 export type { AuthContextType } from './context/AuthContext';
-export type { AuthState, LoginCredentials, RegisterData, ChangePasswordData, ResetPasswordData } from './types';
+export type { AuthState, LoginCredentials, RegisterData, ChangePasswordData, ResetPasswordData } from './models/types';

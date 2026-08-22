@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
 import type { User } from 'shared-api';
-import type { AuthState, LoginCredentials, RegisterData } from '../types';
+import { AuthState, LoginCredentials, RegisterData } from '@/models/config/appConfig';
 
 export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;

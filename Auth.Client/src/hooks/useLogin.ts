@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import type { LoginCredentials } from '../types';
 import type { LoginResponse } from 'shared-api';
+import { LoginCredentials } from '@/models/config/appConfig';
 
 export const useLogin = () => {
   const [data, setData] = useState<LoginResponse | null>(null);

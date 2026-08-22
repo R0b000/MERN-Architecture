@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import type { RegisterData } from '../types';
 import type { RegisterResponse } from 'shared-api';
+import { RegisterData } from '@/models/config/appConfig';
 
 export const useRegister = () => {
   const [data, setData] = useState<RegisterResponse | null>(null);

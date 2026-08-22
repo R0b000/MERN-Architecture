@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import type { ChangePasswordData } from '../types';
+import { ChangePasswordData } from '@/models/config/appConfig';
 
 export const useChangePassword = () => {
   const [error, setError] = useState<string | null>(null);

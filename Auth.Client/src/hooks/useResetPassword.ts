@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import type { ResetPasswordData } from '../types';
+import { ResetPasswordData } from '@/models/config/appConfig';
 
 export const useResetPassword = () => {
   const [error, setError] = useState<string | null>(null);

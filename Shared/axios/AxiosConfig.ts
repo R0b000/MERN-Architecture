@@ -1,12 +1,12 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import type { IResponse } from '../wrappers/IResponse';
+import { IResponse } from '../wrappers/IResponse';
 
 /**
  * Creates an Axios instance with authentication interceptors
  * - Automatically attaches JWT token from localStorage to requests
  * - Clears authToken on 401 Unauthorized responses
  */
-export const createAuthApiClient = (baseURL: string = ''): AxiosInstance => {
+export const axiosConfig = (baseURL: string = ''): AxiosInstance => {
   const api: AxiosInstance = axios.create({
     baseURL,
     headers: {
