@@ -1,19 +1,17 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const dotenv = require('dotenv');
 
-dotenv.config();
-
-const { config } = require('./config/config');
-const { connectDatabase } = require('./config/Database.config');
-const { authRouter } = require('./controllers/AuthController');
-const { authMiddleware, optionalAuthMiddleware } = require('./middleware/AuthMiddleware');
+const { config } = require('../Shared/API/config/config');
+const { connectDatabase } = require('../Shared/API/config/Database.config');
+const {authRouter} = require('auth.server/controllers/AuthController')
 
 const app = express();
-const PORT = config.port || 5001;
+const PORT = config.port || process.env.PORT || 5001;
 
 app.use(helmet());
 app.use(
@@ -45,6 +43,7 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Use AuthRouter in case of auth routes 
 app.use('/api/auth', authRouter);
 
 app.use((req, res) => {
@@ -82,7 +81,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
-module.exports.authRouter = authRouter;
-module.exports.authMiddleware = authMiddleware;
-module.exports.optionalAuthMiddleware = optionalAuthMiddleware;
 module.exports.startServer = startServer;
