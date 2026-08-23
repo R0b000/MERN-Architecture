@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { Response } = require('shared-api');
+const { Response } = require('../../Shared/API/wrappers/Response');
 const { AuthRepository } = require('../repositories/implementations/AuthRepository');
 const { config } = require('../../Shared/API/config/config');
 

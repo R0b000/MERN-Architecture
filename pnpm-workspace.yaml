@@ -1,0 +1,5 @@
+packages:
+  - 'Shared/API'
+  - 'Shared/UI'
+  - 'auth.server'
+  - 'auth.client'
