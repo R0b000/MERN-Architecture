@@ -1,12 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Response } = require('../../Shared/API/wrappers/Response');
-const { AuthRepository } = require('../repositories/implementations/AuthRepository');
+const { User } = require('../models/User');
 const { config } = require('../../Shared/API/config/config');
 
 class AuthService {
   constructor() {
-    this.authRepository = new AuthRepository();
     this.JWT_SECRET = config.jwtSecret;
     this.JWT_EXPIRES_IN = config.jwtExpiresIn;
   }
@@ -15,7 +14,7 @@ class AuthService {
     try {
       const { email, password } = request;
 
-      const user = await this.authRepository.findByEmail(email);
+      const user = await User.findOne({ email }).exec();
 
       if (!user) {
         return Response.fail('Invalid email or password', [], 401);
@@ -64,7 +63,7 @@ class AuthService {
     try {
       const { email, password, firstName, lastName, role = 'user' } = request;
 
-      const emailExists = await this.authRepository.emailExists(email);
+      const emailExists = await User.countDocuments({ email }).exec();
 
       if (emailExists) {
         return Response.fail('Email already registered', [], 400);
@@ -82,7 +81,7 @@ class AuthService {
         isActive: true,
       };
 
-      const newUser = await this.authRepository.create(userData);
+      const newUser = await User.create(userData);
 
       const registerResponse = {
         userId: newUser._id.toString(),
@@ -98,7 +97,7 @@ class AuthService {
 
   async getUserProfile(userId) {
     try {
-      const user = await this.authRepository.findById(userId);
+      const user = await User.findById(userId).exec();
 
       if (!user) {
         return Response.fail('User not found', [], 404);
@@ -123,7 +122,7 @@ class AuthService {
 
   async changePassword(userId, currentPassword, newPassword) {
     try {
-      const user = await this.authRepository.findById(userId);
+      const user = await User.findById(userId).exec();
 
       if (!user) {
         return Response.fail('User not found', [], 404);
@@ -138,7 +137,7 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      await this.authRepository.update(userId, { password: hashedPassword });
+      await User.findByIdAndUpdate(userId, { password: hashedPassword }, { new: true }).exec();
 
       return Response.success('Password changed successfully', ['Password updated successfully']);
     } catch (error) {
@@ -149,7 +148,7 @@ class AuthService {
 
   async forgotPassword(email) {
     try {
-      const user = await this.authRepository.findByEmail(email);
+      const user = await User.findOne({ email }).exec();
 
       if (!user) {
         return Response.success('If the email exists, a reset link will be sent.', []);
@@ -175,7 +174,7 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      await this.authRepository.update(decoded.id, { password: hashedPassword });
+      await User.findByIdAndUpdate(decoded.id, { password: hashedPassword }, { new: true }).exec();
 
       return Response.success('Password reset successfully', ['Password has been reset']);
     } catch (error) {
