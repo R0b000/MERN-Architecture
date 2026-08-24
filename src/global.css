@@ -44,7 +44,7 @@ html, body {
 #matrix {
   position: fixed;
   inset: 0;
-  z-index: -10;
+  z-index: 0;
   opacity: 0.18;
   pointer-events: none;
 }

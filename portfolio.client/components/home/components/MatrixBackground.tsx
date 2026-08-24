@@ -69,7 +69,7 @@ export const MatrixBackground: React.FC<MatrixBackgroundProps> = ({ marquee }) =
     }
   }, []);
 
-  return <canvas ref={canvasRef} id="matrix" className="fixed inset-0 z-[-10] opacity-18 pointer-events-none"></canvas>;
+  return <canvas ref={canvasRef} id="matrix" className="fixed inset-0 z-0 opacity-18 pointer-events-none"></canvas>;
 };
 
 export default MatrixBackground;
