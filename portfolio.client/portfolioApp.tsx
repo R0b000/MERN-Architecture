@@ -1,7 +1,8 @@
-import {  } from './routes/routes';
+import { RouteRenderer } from 'shared-ui/router/RouteRenderer';
+import { PortfolioRoutes } from './routes/routes';
 
 const PortfolioApp = () => {
-  return <RouteRenderer router={PortfolioRoutes} />;
+  return <RouteRenderer config={PortfolioRoutes} />;
 };
 
 export default PortfolioApp;

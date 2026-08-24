@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const { config } = require('./Shared/API/config/config');
 const { connectDatabase } = require('./Shared/API/config/Database.config');
 const {authRouter} = require('./auth.server/controllers/AuthController');
+const {portfolioRouter} = require('./portfolio.server/controller/PortfolioController');
 
 const app = express();
 const PORT = config.port || process.env.PORT || 5001;
@@ -45,7 +46,7 @@ app.get('/health', (req, res) => {
 
 // Use AuthRouter in case of auth routes 
 app.use('/api/auth', authRouter);
-//app.use('/api/portfolio', portfolioRouter);
+app.use('/api/portfolio', portfolioRouter);
 
 app.use((req, res) => {
   res.status(404).json({
