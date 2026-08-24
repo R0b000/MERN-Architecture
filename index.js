@@ -50,15 +50,21 @@ const path = require('path');
 app.use('/api/auth', authRouter);
 app.use('/api/portfolio', portfolioRouter);
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production' || config.nodeEnv === 'production') {
-  app.use(express.static(path.join(__dirname, 'dist')));
+const fs = require('fs');
+const distPath = path.join(__dirname, 'dist');
+
+// Serve static assets if the build folder exists
+if (fs.existsSync(distPath)) {
+  console.log('[Server] Serving static assets from /dist');
+  app.use(express.static(distPath));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    res.sendFile(path.join(distPath, 'index.html'));
   });
+} else {
+  console.log('[Server] Warning: /dist folder not found. Static asset serving is disabled.');
 }
 
 app.use((req, res) => {
