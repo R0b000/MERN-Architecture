@@ -1,0 +1,11 @@
+{
+  "name": "shared-api",
+  "version": "1.0.0",
+  "description": "Shared API types, wrappers, and utilities",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {}
+}
