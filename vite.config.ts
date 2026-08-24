@@ -9,7 +9,7 @@ export default defineConfig({
     alias: {
       'shared-api': path.resolve(__dirname, './Shared/API'),
       'shared-ui': path.resolve(__dirname, './Shared/UI'),
-      'auth-client': path.resolve(__dirname, './auth.client'),
+      'auth-client': path.resolve(__dirname, './Auth.Client'),
       'portfolio-client': path.resolve(__dirname, './portfolio.client'),
     },
   },

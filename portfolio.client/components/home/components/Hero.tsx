@@ -26,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({
       ? typewriterPhrases
       : ['I build scalable full-stack applications.'];
     let phraseIdx = 0, charIdx = 0, deleting = false;
-    let timer: NodeJS.Timeout;
+    let timer: any;
 
     const typeLoop = () => {
       const typeEl = document.getElementById('typewriter');
