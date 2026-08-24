@@ -18,13 +18,13 @@
     "paths": {
       "shared-api/*": ["./Shared/API/*", "./Shared/*"],
       "shared-ui/*": ["./Shared/UI/*"],
-      "auth-client/*": ["./auth.client/*"],
+      "auth-client/*": ["./Auth.Client/*"],
       "portfolio-client/*": ["./portfolio.client/*"]
     }
   },
   "include": [
     "src",
-    "auth.client",
+    "Auth.Client",
     "portfolio.client",
     "Shared/UI"
   ]

@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../auth.client/context/AuthContext';
+import { AuthProvider } from '../Auth.Client/context/AuthContext';
 import { RouteRenderer } from 'shared-ui/router/RouteRenderer';
 import { PortfolioHomePage } from '../portfolio.client/components/home/PortfolioHomePage';
-import { HomePage } from '../auth.client/components/home/HomePage';
-import { LoginPage } from '../auth.client/components/login/LoginPage';
-import { RegisterPage } from '../auth.client/components/register/RegisterPage';
+import { HomePage } from '../Auth.Client/components/home/HomePage';
+import { LoginPage } from '../Auth.Client/components/login/LoginPage';
+import { RegisterPage } from '../Auth.Client/components/register/RegisterPage';
 import type { RouteConfig } from 'shared-ui/router/RouteRenderer.types';
 import './global.css';
 
