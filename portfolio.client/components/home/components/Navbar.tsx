@@ -32,9 +32,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <li><a href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')} className="nav-link">05. CONTACT</a></li>
         </ul>
         <div className="hidden md:flex items-center gap-4">
-          <button onClick={onNavigateToLogin} className="text-xs border border-white/30 px-4 py-2 hover:bg-white hover:text-black transition-all">
+          {/* <button onClick={onNavigateToLogin} className="text-xs border border-white/30 px-4 py-2 hover:bg-white hover:text-black transition-all">
             PORTAL_LOGIN
-          </button>
+          </button> */}
           <a href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')} className="inline-flex items-center gap-2 text-xs border border-white px-4 py-2 hover:bg-white hover:text-black transition-all">
             <span className="w-2 h-2 bg-green-400 rounded-full pulse-dot"></span>
             HIRE_ME

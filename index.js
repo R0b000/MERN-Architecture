@@ -44,9 +44,22 @@ app.get('/health', (req, res) => {
   });
 });
 
+const path = require('path');
+
 // Use AuthRouter in case of auth routes 
 app.use('/api/auth', authRouter);
 app.use('/api/portfolio', portfolioRouter);
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production' || config.nodeEnv === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({
