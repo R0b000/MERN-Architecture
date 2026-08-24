@@ -1,4 +1,4 @@
-import type { User } from '../config/User';
+import type { User } from '../database/User';
 
 export interface LoginResponse {
   token: string;

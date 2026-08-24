@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from "../models/database/User";
 
 
 export type Role = 'user' | 'admin' | 'moderator';

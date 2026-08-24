@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { RegisterForm } from '../register/RegisterForm';
+import { RegisterForm } from './RegisterForm';
 import { useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {

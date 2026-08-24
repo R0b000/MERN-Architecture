@@ -1,15 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../auth.client/context/AuthContext';
-import App from './App';
-import '../auth.client/styles/global.css';
+import AuthApp from '../auth.client/AuthApp';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+<ReactDOM></ReactDOM>.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <AuthApp />
+        <PortfolioApp />
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

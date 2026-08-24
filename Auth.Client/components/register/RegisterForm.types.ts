@@ -1,4 +1,4 @@
-import { RegisterData } from "../../models/config/appConfig";
+import { RegisterData } from "../../config/appConfig";
 
 export interface RegisterFormProps {
   onSubmit?: (data: RegisterData) => void;

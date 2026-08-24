@@ -7,4 +7,4 @@ export const PortfolioRoutes = {
   ],
 } satisfies RouteConfig;
 
-export default PortfolioRoute;
+export default PortfolioRoutes;

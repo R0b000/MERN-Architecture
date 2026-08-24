@@ -45,6 +45,7 @@ app.get('/health', (req, res) => {
 
 // Use AuthRouter in case of auth routes 
 app.use('/api/auth', authRouter);
+//app.use('/api/portfolio', portfolioRouter);
 
 app.use((req, res) => {
   res.status(404).json({
@@ -66,12 +67,11 @@ const startServer = async () => {
   try {
     await connectDatabase();
     app.listen(PORT, () => {
-      console.log(`[Auth.Server] Running on port ${PORT}`);
-      console.log(`[Auth.Server] Environment: ${config.nodeEnv}`);
-      console.log(`[Auth.Server] Auth routes mounted at /api/auth`);
+      console.log(`Server Running on port ${PORT}`);
+      console.log(`Server Environment: ${config.nodeEnv}`);
     });
   } catch (error) {
-    console.error('[Auth.Server] Failed to connect to database:', error);
+    console.error('Server Failed to connect to database:', error);
     process.exit(1);
   }
 };

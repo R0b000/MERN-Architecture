@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { LoginForm } from '../login/LoginForm';
+import { LoginForm } from './LoginForm';
 import { useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {

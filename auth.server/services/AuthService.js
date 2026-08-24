@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Response } = require('../../Shared/API/wrappers/Response');
-const { User } = require('../models/User');
+const { User } = require('../models/database/User');
 const { config } = require('../../Shared/API/config/config');
 
 class AuthService {

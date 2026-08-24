@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPIService } from '../services/AuthAPIService';
-import { AuthState, LoginCredentials, RegisterData } from '../models/config/appConfig';
-import type { User } from '../models/config/User';
+import { AuthState, LoginCredentials, RegisterData } from '../config/appConfig';
+import type { User } from '../models/database/User';
 
 export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;

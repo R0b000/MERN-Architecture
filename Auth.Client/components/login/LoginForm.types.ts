@@ -1,4 +1,4 @@
-import { LoginCredentials } from "../../models/config/appConfig";
+import { LoginCredentials } from "../../config/appConfig";
 
 export interface LoginFormProps {
   onSubmit?: (credentials: LoginCredentials) => void;
