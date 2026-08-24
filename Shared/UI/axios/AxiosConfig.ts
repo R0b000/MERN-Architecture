@@ -1,8 +1,11 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { IResponse } from '../../API/wrappers/IResponse';
 
+const isProduction = import.meta.env.PROD;
+const defaultBaseUrl = isProduction ? '/api' : 'http://localhost:5001/api';
+
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: import.meta.env.VITE_API_URL || defaultBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
