@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit');
 const { config } = require('./Shared/API/config/config');
 const { connectDatabase } = require('./Shared/API/config/Database.config');
 const {authRouter} = require('./auth.server/controllers/AuthController');
-const {portfolioRouter} = require('./portfolio.server/controller/PortfolioController');
+const {portfolioRouter} = require('./portfolio.server/controllers/PortfolioController');
 
 const app = express();
 const PORT = config.port || process.env.PORT || 5001;
