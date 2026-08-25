@@ -39,8 +39,17 @@ export const DashboardOverview = () => {
     }
   };
 
+  // Poll messages + analytics every 10 seconds
   useEffect(() => {
     fetchInbox();
+    refreshData();
+
+    const interval = setInterval(() => {
+      fetchInbox();
+      refreshData();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Update project progress on click (cycles between Planning -> In Progress -> Completed)
