@@ -86,16 +86,24 @@ export const PortfolioHomePage = () => {
     return () => clearTimeout(timer);
   }, [isLoading, portfolioData]);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('> sending...');
-    setTimeout(() => {
-      setFormStatus('✓ message_sent_successfully');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const response = await portfolioAPIService.postMessage(formData);
+      if (response.success) {
+        setFormStatus('✓ message_sent_successfully');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setFormStatus(`✗ error: ${response.messages?.[0] || 'failed_to_send'}`);
+      }
+    } catch (err) {
+      setFormStatus('✗ error: network_connection_failed');
+    } finally {
       setTimeout(() => {
         setFormStatus('');
-      }, 3000);
-    }, 1200);
+      }, 4000);
+    }
   };
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {

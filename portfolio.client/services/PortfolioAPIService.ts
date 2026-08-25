@@ -81,6 +81,16 @@ class PortfolioAPIService {
     const response = await axiosConfig.put<IResponse<PortfolioData>>('/portfolio', data);
     return response.data;
   }
+
+  async postMessage(data: { name: string; email: string; subject: string; message: string }): Promise<IResponse<any>> {
+    const response = await axiosConfig.post<IResponse<any>>('/portfolio/messages', data);
+    return response.data;
+  }
+
+  async getMessages(): Promise<IResponse<any[]>> {
+    const response = await axiosConfig.get<IResponse<any[]>>('/portfolio/messages');
+    return response.data;
+  }
 }
 
 export const portfolioAPIService = new PortfolioAPIService();

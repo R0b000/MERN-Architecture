@@ -1,5 +1,7 @@
 const { Portfolio } = require('../models/database/Portfolio');
+const { Message } = require('../models/database/Message');
 const { Response } = require('../../Shared/API/wrappers/Response');
+const { config } = require('../../Shared/API/config/config');
 
 const defaultPortfolioData = {
   aboutMe: {
@@ -186,6 +188,30 @@ class PortfolioService {
     } catch (error) {
       console.error('[PortfolioService.updatePortfolioData] Error:', error);
       return Response.fail('Failed to update portfolio data', [error.message], 500);
+    }
+  }
+
+  async saveMessage(data) {
+    try {
+      const { name, email, subject, message } = data;
+      if (!name || !email || !subject || !message) {
+        return Response.fail('Missing required fields', [], 400);
+      }
+      const newMessage = await Message.create({ name, email, subject, message });
+      return Response.success(newMessage, ['Message sent successfully'], 201);
+    } catch (error) {
+      console.error('[PortfolioService.saveMessage] Error:', error);
+      return Response.fail('Failed to send message', [error.message], 500);
+    }
+  }
+
+  async getMessages() {
+    try {
+      const messages = await Message.find().sort({ createdAt: -1 }).exec();
+      return Response.success(messages, ['Messages retrieved successfully']);
+    } catch (error) {
+      console.error('[PortfolioService.getMessages] Error:', error);
+      return Response.fail('Failed to fetch messages', [error.message], 500);
     }
   }
 }

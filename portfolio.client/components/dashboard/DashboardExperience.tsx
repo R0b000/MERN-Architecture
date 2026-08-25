@@ -1,0 +1,293 @@
+import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+
+interface OutletContextType {
+  portfolioData: PortfolioData;
+  refreshData: () => Promise<void>;
+}
+
+interface ExperienceType {
+  _id?: string;
+  company: string;
+  period: string;
+  role: string;
+  bulletPoints: string[];
+}
+
+export const DashboardExperience = () => {
+  const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
+  const [isSaving, setIsSaving] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [bulletInput, setBulletInput] = useState('');
+
+  const [editingExperience, setEditingExperience] = useState<ExperienceType | null>(null);
+  const [isNew, setIsNew] = useState(false);
+
+  const handleStartAdd = () => {
+    setEditingExperience({
+      company: '',
+      period: '',
+      role: '',
+      bulletPoints: []
+    });
+    setIsNew(true);
+    setBulletInput('');
+    setSuccessMsg('');
+    setErrorMsg('');
+  };
+
+  const handleStartEdit = (exp: ExperienceType) => {
+    setEditingExperience({ ...exp });
+    setIsNew(false);
+    setBulletInput('');
+    setSuccessMsg('');
+    setErrorMsg('');
+  };
+
+  const handleFieldChange = (key: keyof ExperienceType, value: any) => {
+    if (!editingExperience) return;
+    setEditingExperience(prev => {
+      if (!prev) return null;
+      return { ...prev, [key]: value };
+    });
+  };
+
+  const handleAddBullet = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (bulletInput.trim() && editingExperience) {
+      handleFieldChange('bulletPoints', [...editingExperience.bulletPoints, bulletInput.trim()]);
+      setBulletInput('');
+    }
+  };
+
+  const handleRemoveBullet = (idxToRemove: number) => {
+    if (!editingExperience) return;
+    handleFieldChange('bulletPoints', editingExperience.bulletPoints.filter((_, i) => i !== idxToRemove));
+  };
+
+  const handleDelete = async (expId: string) => {
+    if (!window.confirm('Are you sure you want to delete this experience entry?')) return;
+    setIsSaving(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const updatedExperience = portfolioData.experience.filter(e => e._id !== expId);
+      const response = await portfolioAPIService.updatePortfolioData({
+        experience: updatedExperience
+      });
+
+      if (response.success) {
+        setSuccessMsg('Experience entry deleted successfully!');
+        await refreshData();
+      } else {
+        setErrorMsg(response.messages?.[0] || 'Failed to delete entry');
+      }
+    } catch (err) {
+      setErrorMsg('A network error occurred');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingExperience) return;
+    setIsSaving(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      let updatedExperience = [...portfolioData.experience];
+
+      if (isNew) {
+        updatedExperience.push(editingExperience);
+      } else {
+        updatedExperience = updatedExperience.map(e => e._id === editingExperience._id ? editingExperience : e);
+      }
+
+      const response = await portfolioAPIService.updatePortfolioData({
+        experience: updatedExperience
+      });
+
+      if (response.success) {
+        setSuccessMsg(isNew ? 'Experience entry added successfully!' : 'Experience entry updated successfully!');
+        setEditingExperience(null);
+        await refreshData();
+      } else {
+        setErrorMsg(response.messages?.[0] || 'Failed to save entry');
+      }
+    } catch (err) {
+      setErrorMsg('A network error occurred');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-5">
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Professional Experience</h1>
+          <p className="text-sm text-slate-400">Manage your employment history, roles, and major accomplishments.</p>
+        </div>
+        {!editingExperience && (
+          <button
+            onClick={handleStartAdd}
+            className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2 px-5 rounded-xl transition-all shadow-md text-sm"
+          >
+            + Add Experience
+          </button>
+        )}
+      </div>
+
+      {successMsg && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-sm font-medium">
+          {successMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-medium">
+          {errorMsg}
+        </div>
+      )}
+
+      {editingExperience ? (
+        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">
+            {isNew ? 'Add Experience Entry' : 'Edit Experience Details'}
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Company Name</label>
+              <input
+                type="text"
+                value={editingExperience.company}
+                onChange={(e) => handleFieldChange('company', e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Job Role / Title</label>
+              <input
+                type="text"
+                value={editingExperience.role}
+                onChange={(e) => handleFieldChange('role', e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                required
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Period / Duration</label>
+              <input
+                type="text"
+                value={editingExperience.period}
+                onChange={(e) => handleFieldChange('period', e.target.value)}
+                placeholder="2024 — PRESENT"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Bullet Points Section */}
+          <div className="space-y-3">
+            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Job Achievements & Responsibilities</label>
+            <div className="space-y-2 mb-3">
+              {editingExperience.bulletPoints.map((bullet, idx) => (
+                <div key={idx} className="flex gap-2 items-start bg-slate-950 p-3 rounded-xl border border-slate-850">
+                  <span className="text-orange-500 font-bold shrink-0 mt-0.5">•</span>
+                  <p className="flex-1 text-sm text-slate-350">{bullet}</p>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveBullet(idx)}
+                    className="text-xs text-red-500 font-semibold hover:text-red-400 shrink-0 select-none"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 max-w-2xl">
+              <input
+                type="text"
+                value={bulletInput}
+                onChange={(e) => setBulletInput(e.target.value)}
+                placeholder="Implemented secure user auth using JWT..."
+                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddBullet}
+                className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2 rounded-xl text-sm"
+              >
+                + Add Bullet
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-3 border-t border-slate-800">
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md text-sm disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save Entry'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditingExperience(null)}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 px-6 rounded-xl transition-all text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="space-y-6">
+          {portfolioData.experience.map((exp) => (
+            <div key={exp._id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-4">
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-850 pb-3 gap-2">
+                  <div>
+                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">{exp.period}</span>
+                    <h4 className="text-lg font-bold text-white leading-tight">{exp.role}</h4>
+                    <p className="text-slate-400 text-sm mt-0.5">{exp.company}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleStartEdit(exp)}
+                      className="bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold py-2 px-4 rounded-xl transition-colors border border-slate-850"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(exp._id!)}
+                      className="bg-red-500/10 border border-red-500/20 hover:bg-red-500 text-red-400 hover:text-white text-xs font-semibold py-2 px-4 rounded-xl transition-all"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                
+                <ul className="list-disc pl-5 mt-4 space-y-2 text-sm text-slate-400">
+                  {exp.bulletPoints.map((bp, i) => (
+                    <li key={i} className="leading-relaxed">{bp}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DashboardExperience;
