@@ -128,15 +128,15 @@ export const DashboardExperience = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-5">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Professional Experience</h1>
-          <p className="text-sm text-slate-400">Manage your employment history, roles, and major accomplishments.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Professional Experience</h1>
+          <p className="text-sm text-slate-500">Manage your employment history, roles, and major accomplishments.</p>
         </div>
         {!editingExperience && (
           <button
             onClick={handleStartAdd}
-            className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2 px-5 rounded-xl transition-all shadow-md text-sm"
+            className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2 px-5 rounded-xl transition-all shadow-md shadow-orange-600/10 text-sm cursor-pointer"
           >
             + Add Experience
           </button>
@@ -144,52 +144,52 @@ export const DashboardExperience = () => {
       </div>
 
       {successMsg && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-sm font-medium">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
           {successMsg}
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-medium">
+        <div className="p-3.5 bg-red-50 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
           {errorMsg}
         </div>
       )}
 
       {editingExperience ? (
-        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">
+        <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
             {isNew ? 'Add Experience Entry' : 'Edit Experience Details'}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Company Name</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Company Name</label>
               <input
                 type="text"
                 value={editingExperience.company}
                 onChange={(e) => handleFieldChange('company', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-55 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Job Role / Title</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Job Role / Title</label>
               <input
                 type="text"
                 value={editingExperience.role}
                 onChange={(e) => handleFieldChange('role', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-55 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Period / Duration</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Period / Duration</label>
               <input
                 type="text"
                 value={editingExperience.period}
                 onChange={(e) => handleFieldChange('period', e.target.value)}
                 placeholder="2024 — PRESENT"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-55 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
@@ -197,16 +197,16 @@ export const DashboardExperience = () => {
 
           {/* Bullet Points Section */}
           <div className="space-y-3">
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Job Achievements & Responsibilities</label>
+            <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider block">Job Achievements & Responsibilities</label>
             <div className="space-y-2 mb-3">
               {editingExperience.bulletPoints.map((bullet, idx) => (
-                <div key={idx} className="flex gap-2 items-start bg-slate-950 p-3 rounded-xl border border-slate-850">
+                <div key={idx} className="flex gap-2 items-start bg-slate-50 p-3 rounded-xl border border-slate-200">
                   <span className="text-orange-500 font-bold shrink-0 mt-0.5">•</span>
-                  <p className="flex-1 text-sm text-slate-350">{bullet}</p>
+                  <p className="flex-1 text-sm text-slate-600">{bullet}</p>
                   <button
                     type="button"
                     onClick={() => handleRemoveBullet(idx)}
-                    className="text-xs text-red-500 font-semibold hover:text-red-400 shrink-0 select-none"
+                    className="text-xs text-red-500 font-semibold hover:text-red-400 shrink-0 select-none cursor-pointer"
                   >
                     Remove
                   </button>
@@ -220,30 +220,30 @@ export const DashboardExperience = () => {
                 value={bulletInput}
                 onChange={(e) => setBulletInput(e.target.value)}
                 placeholder="Implemented secure user auth using JWT..."
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="flex-1 bg-slate-55 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-550/10 transition-all"
               />
               <button
                 type="button"
                 onClick={handleAddBullet}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2 rounded-xl text-sm"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm transition-colors border border-slate-200 cursor-pointer"
               >
                 + Add Bullet
               </button>
             </div>
           </div>
 
-          <div className="flex gap-3 pt-3 border-t border-slate-800">
+          <div className="flex gap-3 pt-3 border-t border-slate-100">
             <button
               type="submit"
               disabled={isSaving}
-              className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md text-sm disabled:opacity-50"
+              className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md text-sm disabled:opacity-50 cursor-pointer"
             >
               {isSaving ? 'Saving...' : 'Save Entry'}
             </button>
             <button
               type="button"
               onClick={() => setEditingExperience(null)}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 px-6 rounded-xl transition-all text-sm"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-6 rounded-xl transition-all text-sm cursor-pointer"
             >
               Cancel
             </button>
@@ -252,31 +252,31 @@ export const DashboardExperience = () => {
       ) : (
         <div className="space-y-6">
           {portfolioData.experience.map((exp) => (
-            <div key={exp._id} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between gap-4">
+            <div key={exp._id} className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between gap-4 shadow-sm hover:border-slate-300 transition-all">
               <div>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-850 pb-3 gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 gap-2">
                   <div>
-                    <span className="text-xs font-bold text-orange-500 uppercase tracking-wider">{exp.period}</span>
-                    <h4 className="text-lg font-bold text-white leading-tight">{exp.role}</h4>
-                    <p className="text-slate-400 text-sm mt-0.5">{exp.company}</p>
+                    <span className="text-xs font-bold text-orange-605 uppercase tracking-wider">{exp.period}</span>
+                    <h4 className="text-lg font-bold text-slate-900 leading-tight">{exp.role}</h4>
+                    <p className="text-slate-500 text-sm mt-0.5">{exp.company}</p>
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleStartEdit(exp)}
-                      className="bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold py-2 px-4 rounded-xl transition-colors border border-slate-850"
+                      className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold py-2 px-4 rounded-xl transition-all border border-slate-200 cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(exp._id!)}
-                      className="bg-red-500/10 border border-red-500/20 hover:bg-red-500 text-red-400 hover:text-white text-xs font-semibold py-2 px-4 rounded-xl transition-all"
+                      className="bg-red-50 border border-red-200 hover:bg-red-500 hover:text-white text-red-650 text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
                     >
                       Delete
                     </button>
                   </div>
                 </div>
                 
-                <ul className="list-disc pl-5 mt-4 space-y-2 text-sm text-slate-400">
+                <ul className="list-disc pl-5 mt-4 space-y-2 text-sm text-slate-500">
                   {exp.bulletPoints.map((bp, i) => (
                     <li key={i} className="leading-relaxed">{bp}</li>
                   ))}

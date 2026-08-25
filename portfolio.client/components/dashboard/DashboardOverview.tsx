@@ -93,28 +93,28 @@ export const DashboardOverview = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-5 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-5 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Overview & Profile Details</h1>
-          <p className="text-sm text-slate-400">Update your bio information, hero typewriter highlights, stats, and coordinates.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview & Profile Details</h1>
+          <p className="text-sm text-slate-500">Update your bio information, hero typewriter highlights, stats, and coordinates.</p>
         </div>
         <button
           onClick={handleSubmit}
           disabled={isSaving}
-          className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2 px-6 rounded-xl transition-all shadow-md shadow-orange-600/10 text-sm disabled:opacity-50 self-start"
+          className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-orange-600/10 text-sm disabled:opacity-50 self-start cursor-pointer"
         >
           {isSaving ? 'Saving Changes...' : 'Save Profile Details'}
         </button>
       </div>
 
       {successMsg && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-sm font-medium">
+        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
           {successMsg}
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm font-medium">
+        <div className="p-3.5 bg-red-55 border border-red-200 text-red-600 rounded-xl text-sm font-semibold">
           {errorMsg}
         </div>
       )}
@@ -122,27 +122,27 @@ export const DashboardOverview = () => {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Bio & Slogans */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">About Me Info</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">About Me Info</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Role Title</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Role Title</label>
                 <input
                   type="text"
                   value={formData.aboutMe.role}
                   onChange={(e) => handleAboutMeChange('role', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Degree/Education</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Degree/Education</label>
                 <input
                   type="text"
                   value={formData.aboutMe.education}
                   onChange={(e) => handleAboutMeChange('education', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
@@ -150,47 +150,47 @@ export const DashboardOverview = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">College/Institution</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">College/Institution</label>
                 <input
                   type="text"
                   value={formData.aboutMe.college}
                   onChange={(e) => handleAboutMeChange('college', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Graduation Year</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Graduation Year</label>
                 <input
                   type="number"
                   value={formData.aboutMe.gradYear}
                   onChange={(e) => handleAboutMeChange('gradYear', parseInt(e.target.value) || 0)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bio Introduction</label>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bio Introduction</label>
               <textarea
                 rows={4}
                 value={formData.aboutMe.intro}
                 onChange={(e) => handleAboutMeChange('intro', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500 resize-none"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all resize-none"
                 required
               />
             </div>
           </div>
 
           {/* Typewriter Phrases */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <h3 className="text-lg font-bold text-white">Hero Typewriter Phrases</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h3 className="text-lg font-bold text-slate-900">Hero Typewriter Phrases</h3>
               <button
                 type="button"
                 onClick={addPhrase}
-                className="text-xs bg-orange-600/10 text-orange-400 border border-orange-600/20 px-3 py-1 rounded-lg hover:bg-orange-600 hover:text-white transition-all font-semibold"
+                className="text-xs bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-lg hover:bg-orange-600 hover:text-white transition-all font-bold cursor-pointer"
               >
                 + Add Phrase
               </button>
@@ -203,14 +203,14 @@ export const DashboardOverview = () => {
                     type="text"
                     value={phrase}
                     onChange={(e) => handlePhraseChange(idx, e.target.value)}
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                     placeholder={`Phrase #${idx + 1}`}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => removePhrase(idx)}
-                    className="p-2 border border-red-500/20 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-xl transition-colors shrink-0"
+                    className="p-2 border border-red-200 bg-red-50 hover:bg-red-500 text-red-650 hover:text-white rounded-xl transition-all shrink-0 cursor-pointer"
                   >
                     🗑
                   </button>
@@ -222,55 +222,55 @@ export const DashboardOverview = () => {
 
         {/* Right Col: Stats & Contacts */}
         <div className="space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">Contact Details</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Contact Details</h3>
             
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Full Name</label>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Full Name</label>
               <input
                 type="text"
                 value={formData.contact.name}
                 onChange={(e) => handleContactChange('name', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Email Address</label>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email Address</label>
               <input
                 type="email"
                 value={formData.contact.email}
                 onChange={(e) => handleContactChange('email', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Phone</label>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</label>
               <input
                 type="text"
                 value={formData.contact.phone}
                 onChange={(e) => handleContactChange('phone', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Location</label>
+              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</label>
               <input
                 type="text"
                 value={formData.contact.location}
                 onChange={(e) => handleContactChange('location', e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                 required
               />
             </div>
 
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Available for Hire</span>
+              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Available for Hire</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -278,52 +278,52 @@ export const DashboardOverview = () => {
                   onChange={(e) => handleContactChange('available', e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-slate-850 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 peer-checked:after:bg-white after:border-slate-350 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
               </label>
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-2">Hero Panel Stats</h3>
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Hero Panel Stats</h3>
             
             <div className="space-y-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Experience (Years)</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Experience (Years)</label>
                 <input
                   type="text"
                   value={formData.aboutMe.stats.yearsExperience}
                   onChange={(e) => handleStatChange('yearsExperience', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projects Shipped</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Projects Shipped</label>
                 <input
                   type="text"
                   value={formData.aboutMe.stats.projectsShipped}
                   onChange={(e) => handleStatChange('projectsShipped', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tech Stacks</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tech Stacks</label>
                 <input
                   type="text"
                   value={formData.aboutMe.stats.techStacks}
                   onChange={(e) => handleStatChange('techStacks', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Curiosity Rating</label>
+                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Curiosity Rating</label>
                 <input
                   type="text"
                   value={formData.aboutMe.stats.curiosity}
                   onChange={(e) => handleStatChange('curiosity', e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-orange-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
                   required
                 />
               </div>
