@@ -60,6 +60,22 @@ export const PortfolioHomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Guard variable to prevent React 18 StrictMode double-mount calls
+  useEffect(() => {
+    // Check if view has already been logged in this session load
+    if ((window as any).__viewLogged) return;
+    (window as any).__viewLogged = true;
+
+    const logView = async () => {
+      try {
+        await portfolioAPIService.incrementViews();
+      } catch (err) {
+        console.error('Failed to log page view', err);
+      }
+    };
+    logView();
+  }, []);
+
   // Intersection Observer for scroll animations
   useEffect(() => {
     if (isLoading || !portfolioData) return;

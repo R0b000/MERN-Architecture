@@ -96,6 +96,19 @@ router.put('/messages/:id/read', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/analytics/view', async (req, res) => {
+  try {
+    const response = await portfolioService.incrementViews();
+    res.status(response.statusCode || 200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      messages: ['Failed to increment page view counter'],
+      errors: [error.message],
+    });
+  }
+});
+
 const portfolioRouter = router;
 
 module.exports = { portfolioRouter, router };

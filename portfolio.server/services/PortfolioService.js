@@ -168,8 +168,6 @@ class PortfolioService {
       if (!portfolio) {
         console.log('[PortfolioService] No portfolio data found. Seeding database with defaults...');
         portfolio = await Portfolio.create(defaultPortfolioData);
-      } else {
-        portfolio = await Portfolio.findByIdAndUpdate(portfolio._id, { $inc: { 'analytics.views': 1 } }, { new: true }).exec();
       }
       return Response.success(portfolio, ['Portfolio data retrieved successfully']);
     } catch (error) {
@@ -247,6 +245,16 @@ class PortfolioService {
     } catch (error) {
       console.error('[PortfolioService.markMessageAsRead] Error:', error);
       return Response.fail('Failed to mark message as read', [error.message], 500);
+    }
+  }
+
+  async incrementViews() {
+    try {
+      const portfolio = await Portfolio.findOneAndUpdate({}, { $inc: { 'analytics.views': 1 } }, { new: true }).exec();
+      return Response.success(portfolio, ['Incremented page view count successfully']);
+    } catch (error) {
+      console.error('[PortfolioService.incrementViews] Error:', error);
+      return Response.fail('Failed to increment views count', [error.message], 500);
     }
   }
 }

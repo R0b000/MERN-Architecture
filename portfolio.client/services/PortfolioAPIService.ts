@@ -43,6 +43,11 @@ class PortfolioAPIService {
     const response = await axiosConfig.put<IResponse<MessageResponse>>(`${PortfolioAPIRoutes.MESSAGES}/${id}/read`);
     return response.data;
   }
+
+  async incrementViews(): Promise<IResponse<PortfolioResponse>> {
+    const response = await axiosConfig.post<IResponse<PortfolioResponse>>(PortfolioAPIRoutes.ANALYTICS_VIEW);
+    return response.data;
+  }
 }
 
 export const portfolioAPIService = new PortfolioAPIService();
