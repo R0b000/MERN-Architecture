@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { portfolioAPIService } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
 
 interface MessageType {
   _id: string;
@@ -13,27 +14,27 @@ interface MessageType {
 export const DashboardMessages = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState('');
+  const { showToast } = useToast();
 
-  const fetchMessages = async () => {
-    setIsLoading(true);
-    setErrorMsg('');
+  const fetchMessages = async (silent = false) => {
+    if (!silent) setIsLoading(true);
     try {
       const response = await portfolioAPIService.getMessages();
       if (response.success && response.data) {
         setMessages(response.data as unknown as MessageType[]);
+        if (!silent) showToast('Inbox messages retrieved!', 'success');
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to retrieve messages.');
+        showToast(response.messages?.[0] || 'Failed to retrieve messages.', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred while fetching messages.');
+      showToast('A network error occurred while fetching messages.', 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMessages();
+    fetchMessages(true);
   }, []);
 
   return (
@@ -44,18 +45,12 @@ export const DashboardMessages = () => {
           <p className="text-sm text-slate-505">View and respond to incoming contact messages from your portfolio website.</p>
         </div>
         <button
-          onClick={fetchMessages}
+          onClick={() => fetchMessages(false)}
           className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
         >
           🔄 Refresh Inbox
         </button>
       </div>
-
-      {errorMsg && (
-        <div className="p-3.5 bg-red-50 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
 
       {isLoading ? (
         <div className="flex items-center justify-center min-h-[250px]">
@@ -87,9 +82,9 @@ export const DashboardMessages = () => {
                     </div>
                   </div>
                   
-                  <div className="space-y-1 bg-slate-50 p-3.5 rounded-xl border border-slate-150">
+                  <div className="space-y-1 bg-slate-55 p-3.5 rounded-xl border border-slate-150">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">// Subject: {msg.subject}</span>
-                    <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed mt-1.5">{msg.message}</p>
+                    <p className="text-sm text-slate-750 whitespace-pre-wrap leading-relaxed mt-1.5">{msg.message}</p>
                   </div>
                 </div>
                 

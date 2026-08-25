@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
+import { ConfirmModal } from '../modal/ConfirmModal';
 
 interface OutletContextType {
   portfolioData: PortfolioData;
@@ -17,12 +19,15 @@ interface EducationType {
 
 export const DashboardEducation = () => {
   const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
+  const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
 
   const [editingEducation, setEditingEducation] = useState<EducationType | null>(null);
   const [isNew, setIsNew] = useState(false);
+
+  // Custom Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [eduToDeleteId, setEduToDeleteId] = useState<string | null>(null);
 
   const handleStartAdd = () => {
     setEditingEducation({
@@ -32,15 +37,11 @@ export const DashboardEducation = () => {
       institution: ''
     });
     setIsNew(true);
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleStartEdit = (edu: EducationType) => {
     setEditingEducation({ ...edu });
     setIsNew(false);
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleFieldChange = (key: keyof EducationType, value: string) => {
@@ -51,28 +52,33 @@ export const DashboardEducation = () => {
     });
   };
 
-  const handleDelete = async (eduId: string) => {
-    if (!window.confirm('Are you sure you want to delete this education entry?')) return;
+  const handleTriggerDelete = (eduId: string) => {
+    setEduToDeleteId(eduId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!eduToDeleteId) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
-      const updatedEducation = portfolioData.education.filter(e => e._id !== eduId);
+      const updatedEducation = portfolioData.education.filter(e => e._id !== eduToDeleteId);
       const response = await portfolioAPIService.updatePortfolioData({
         education: updatedEducation
       });
 
       if (response.success) {
-        setSuccessMsg('Education entry deleted successfully!');
+        showToast('Education credential deleted successfully!', 'success');
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to delete entry');
+        showToast(response.messages?.[0] || 'Failed to delete entry', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
+      setDeleteModalOpen(false);
+      setEduToDeleteId(null);
     }
   };
 
@@ -80,8 +86,6 @@ export const DashboardEducation = () => {
     e.preventDefault();
     if (!editingEducation) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
       let updatedEducation = [...portfolioData.education];
@@ -97,14 +101,14 @@ export const DashboardEducation = () => {
       });
 
       if (response.success) {
-        setSuccessMsg(isNew ? 'Education entry added successfully!' : 'Education entry updated successfully!');
+        showToast(isNew ? 'Education entry added successfully!' : 'Education entry updated successfully!', 'success');
         setEditingEducation(null);
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to save entry');
+        showToast(response.messages?.[0] || 'Failed to save entry', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -127,18 +131,6 @@ export const DashboardEducation = () => {
         )}
       </div>
 
-      {successMsg && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
-          {successMsg}
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3.5 bg-red-50 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
-
       {editingEducation ? (
         <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
           <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
@@ -147,7 +139,7 @@ export const DashboardEducation = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Icon Emoji</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Icon Emoji</label>
               <input
                 type="text"
                 value={editingEducation.icon}
@@ -157,7 +149,7 @@ export const DashboardEducation = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Year Range / Year</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Year Range / Year</label>
               <input
                 type="text"
                 value={editingEducation.year}
@@ -180,7 +172,7 @@ export const DashboardEducation = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Institution / School Name</label>
+            <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Institution / School Name</label>
             <input
               type="text"
               value={editingEducation.institution}
@@ -216,7 +208,7 @@ export const DashboardEducation = () => {
                 <div>
                   <span className="text-xs font-bold text-orange-600 uppercase tracking-wider">{edu.year}</span>
                   <h4 className="text-base font-bold text-slate-900 leading-tight">{edu.title}</h4>
-                  <p className="text-slate-500 text-xs mt-0.5">{edu.institution}</p>
+                  <p className="text-slate-505 text-xs mt-0.5">{edu.institution}</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -227,7 +219,7 @@ export const DashboardEducation = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(edu._id!)}
+                  onClick={() => handleTriggerDelete(edu._id!)}
                   className="bg-red-50 border border-red-200 hover:bg-red-500 hover:text-white text-red-650 text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
                 >
                   Delete
@@ -237,6 +229,18 @@ export const DashboardEducation = () => {
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete Academic Credential"
+        message="Are you sure you want to delete this education entry? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setEduToDeleteId(null);
+        }}
+      />
     </div>
   );
 };

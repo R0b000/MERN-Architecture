@@ -6,6 +6,7 @@ interface NavbarProps {
   setMobileMenuOpen: (open: boolean) => void;
   onNavigateToLogin: () => void;
   handleSmoothScroll: (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => void;
+  onHireMeClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -14,8 +15,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   setMobileMenuOpen,
   onNavigateToLogin,
   handleSmoothScroll,
+  onHireMeClick,
 }) => {
   const firstName = name.split(' ')[0].toUpperCase();
+
+  const handleHireClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    handleSmoothScroll(e, '#contact');
+    if (onHireMeClick) onHireMeClick();
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md bg-black/60 border-b border-white/10">
@@ -35,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* <button onClick={onNavigateToLogin} className="text-xs border border-white/30 px-4 py-2 hover:bg-white hover:text-black transition-all">
             PORTAL_LOGIN
           </button> */}
-          <a href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')} className="inline-flex items-center gap-2 text-xs border border-white px-4 py-2 hover:bg-white hover:text-black transition-all">
+          <a href="#contact" onClick={handleHireClick} className="inline-flex items-center gap-2 text-xs border border-white px-4 py-2 hover:bg-white hover:text-black transition-all">
             <span className="w-2 h-2 bg-green-400 rounded-full pulse-dot"></span>
             HIRE_ME
           </a>

@@ -28,6 +28,21 @@ class PortfolioAPIService {
     const response = await axiosConfig.get<IResponse<MessageResponse[]>>(PortfolioAPIRoutes.MESSAGES);
     return response.data;
   }
+
+  async incrementHireMeClicks(): Promise<IResponse<PortfolioResponse>> {
+    const response = await axiosConfig.post<IResponse<PortfolioResponse>>(PortfolioAPIRoutes.ANALYTICS_HIRE);
+    return response.data;
+  }
+
+  async incrementProjectClicks(): Promise<IResponse<PortfolioResponse>> {
+    const response = await axiosConfig.post<IResponse<PortfolioResponse>>(PortfolioAPIRoutes.ANALYTICS_PROJECT);
+    return response.data;
+  }
+
+  async markMessageAsRead(id: string): Promise<IResponse<MessageResponse>> {
+    const response = await axiosConfig.put<IResponse<MessageResponse>>(`${PortfolioAPIRoutes.MESSAGES}/${id}/read`);
+    return response.data;
+  }
 }
 
 export const portfolioAPIService = new PortfolioAPIService();

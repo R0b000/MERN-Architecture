@@ -10,8 +10,10 @@ const { config } = require('./Shared/API/config/config');
 const { connectDatabase } = require('./Shared/API/config/Database.config');
 const {authRouter} = require('./auth.server/controllers/AuthController');
 const {portfolioRouter} = require('./portfolio.server/controllers/PortfolioController');
+const {visitorTrackingMiddleware} = require('./portfolio.server/middleware/VisitorTrackingMiddleware');
 
 const app = express();
+app.use(visitorTrackingMiddleware);
 const PORT = config.port || process.env.PORT || 5001;
 
 app.use(helmet());

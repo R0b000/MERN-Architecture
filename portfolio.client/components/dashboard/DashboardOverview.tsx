@@ -1,336 +1,271 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
 
 interface OutletContextType {
   portfolioData: PortfolioData;
   refreshData: () => Promise<void>;
 }
 
+interface MessageType {
+  _id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
 export const DashboardOverview = () => {
   const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
-  const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const { showToast } = useToast();
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+  const [isUpdatingProject, setIsUpdatingProject] = useState(false);
 
-  const [formData, setFormData] = useState({
-    aboutMe: { ...portfolioData.aboutMe },
-    contact: { ...portfolioData.contact }
-  });
-
-  const handleStatChange = (key: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      aboutMe: {
-        ...prev.aboutMe,
-        stats: {
-          ...prev.aboutMe.stats,
-          [key]: value
-        }
-      }
-    }));
-  };
-
-  const handleAboutMeChange = (key: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      aboutMe: {
-        ...prev.aboutMe,
-        [key]: value
-      }
-    }));
-  };
-
-  const handleContactChange = (key: string, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        [key]: value
-      }
-    }));
-  };
-
-  const handlePhraseChange = (index: number, value: string) => {
-    const updatedPhrases = [...formData.aboutMe.typewriterPhrases];
-    updatedPhrases[index] = value;
-    handleAboutMeChange('typewriterPhrases', updatedPhrases);
-  };
-
-  const addPhrase = () => {
-    handleAboutMeChange('typewriterPhrases', [...formData.aboutMe.typewriterPhrases, '']);
-  };
-
-  const removePhrase = (index: number) => {
-    const updatedPhrases = formData.aboutMe.typewriterPhrases.filter((_, i) => i !== index);
-    handleAboutMeChange('typewriterPhrases', updatedPhrases);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
-
+  // Fetch messages
+  const fetchInbox = async () => {
     try {
-      const response = await portfolioAPIService.updatePortfolioData({
-        aboutMe: formData.aboutMe,
-        contact: formData.contact
-      });
-
-      if (response.success) {
-        setSuccessMsg('Profile details updated successfully!');
-        await refreshData();
-      } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to update profile');
+      const response = await portfolioAPIService.getMessages();
+      if (response.success && response.data) {
+        setMessages(response.data as unknown as MessageType[]);
       }
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'A network error occurred');
+      console.error('Failed to load dashboard messages');
     } finally {
-      setIsSaving(false);
+      setLoadingMessages(false);
     }
   };
 
+  useEffect(() => {
+    fetchInbox();
+  }, []);
+
+  // Update project progress on click (cycles between Planning -> In Progress -> Completed)
+  const handleCycleProjectProgress = async (projectId: string, currentProgress = 'Completed') => {
+    if (isUpdatingProject) return;
+    setIsUpdatingProject(true);
+
+    const statuses = ['Planning', 'In Progress', 'Completed'];
+    const nextStatusIdx = (statuses.indexOf(currentProgress) + 1) % statuses.length;
+    const nextStatus = statuses[nextStatusIdx];
+
+    try {
+      const updatedProjects = portfolioData.projects.map(p => {
+        if (p._id === projectId) {
+          return { ...p, progress: nextStatus };
+        }
+        return p;
+      });
+
+      const response = await portfolioAPIService.updatePortfolioData({
+        projects: updatedProjects
+      });
+
+      if (response.success) {
+        showToast(`Project progress updated to "${nextStatus}"`, 'success');
+        await refreshData();
+      } else {
+        showToast(response.messages?.[0] || 'Failed to update status', 'error');
+      }
+    } catch (err) {
+      showToast('A network error occurred', 'error');
+    } finally {
+      setIsUpdatingProject(false);
+    }
+  };
+
+  // Mark message as read
+  const handleMarkMessageRead = async (messageId: string) => {
+    try {
+      const response = await portfolioAPIService.markMessageAsRead(messageId);
+      if (response.success) {
+        showToast('Message marked as read', 'success');
+        setMessages(prev => prev.map(m => m._id === messageId ? { ...m, isRead: true } : m));
+      } else {
+        showToast(response.messages?.[0] || 'Failed to update message', 'error');
+      }
+    } catch (err) {
+      showToast('A network error occurred', 'error');
+    }
+  };
+
+  const totalViews = portfolioData.analytics?.views || 0;
+  const totalHireClicks = portfolioData.analytics?.hireMeClicks || 0;
+  const totalProjectClicks = portfolioData.analytics?.projectClicks || 0;
+  const totalMessages = messages.length;
+  const unreadMessagesCount = messages.filter(m => !m.isRead).length;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-5 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Overview & Profile Details</h1>
-          <p className="text-sm text-slate-500">Update your bio information, hero typewriter highlights, stats, and coordinates.</p>
+      {/* Top Welcome Panel */}
+      {/* <div className="border-b border-slate-200 pb-5">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Admin Console Dashboard</h1>
+        <p className="text-sm text-slate-500">Live analytics metrics and system status overview.</p>
+      </div> */}
+
+      {/* Analytics Counters */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* views */}
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            👁️
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Portfolio Views</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">{totalViews}</h3>
+          </div>
         </div>
-        <button
-          onClick={handleSubmit}
-          disabled={isSaving}
-          className="bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-orange-600/10 text-sm disabled:opacity-50 self-start cursor-pointer"
-        >
-          {isSaving ? 'Saving Changes...' : 'Save Profile Details'}
-        </button>
+
+        {/* hire clicks */}
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-orange-50 text-orange-655 rounded-xl flex items-center justify-center text-xl shrink-0">
+            🤝
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hire Me Inquiries</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">{totalHireClicks}</h3>
+          </div>
+        </div>
+
+        {/* project clicks */}
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            📁
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Project Clicks</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">{totalProjectClicks}</h3>
+          </div>
+        </div>
+
+        {/* messages inbox */}
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center text-xl shrink-0">
+            ✉️
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unread Messages</p>
+            <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">
+              {unreadMessagesCount} <span className="text-xs font-semibold text-slate-400">/ {totalMessages} total</span>
+            </h3>
+          </div>
+        </div>
       </div>
 
-      {successMsg && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
-          {successMsg}
-        </div>
-      )}
+      {/* Main Mid Section Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Projects Progress Tracker */}
+        {/* <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
+          <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+            <span>📁</span> Projects Progress Tracker
+          </h3>
+          <p className="text-xs text-slate-400">// Click badge status to cycle (Planning → In Progress → Completed)</p>
 
-      {errorMsg && (
-        <div className="p-3.5 bg-red-55 border border-red-200 text-red-600 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Col: Bio & Slogans */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">About Me Info</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Role Title</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.role}
-                  onChange={(e) => handleAboutMeChange('role', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Degree/Education</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.education}
-                  onChange={(e) => handleAboutMeChange('education', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">College/Institution</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.college}
-                  onChange={(e) => handleAboutMeChange('college', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Graduation Year</label>
-                <input
-                  type="number"
-                  value={formData.aboutMe.gradYear}
-                  onChange={(e) => handleAboutMeChange('gradYear', parseInt(e.target.value) || 0)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bio Introduction</label>
-              <textarea
-                rows={4}
-                value={formData.aboutMe.intro}
-                onChange={(e) => handleAboutMeChange('intro', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all resize-none"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Typewriter Phrases */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 className="text-lg font-bold text-slate-900">Hero Typewriter Phrases</h3>
-              <button
-                type="button"
-                onClick={addPhrase}
-                className="text-xs bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-lg hover:bg-orange-600 hover:text-white transition-all font-bold cursor-pointer"
-              >
-                + Add Phrase
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              {formData.aboutMe.typewriterPhrases.map((phrase, idx) => (
-                <div key={idx} className="flex gap-2 items-center">
-                  <input
-                    type="text"
-                    value={phrase}
-                    onChange={(e) => handlePhraseChange(idx, e.target.value)}
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                    placeholder={`Phrase #${idx + 1}`}
-                    required
-                  />
+          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+            {portfolioData.projects.map((project) => {
+              const status = project.progress || 'Completed';
+              return (
+                <div key={project._id} className="flex items-center justify-between bg-slate-50/50 border border-slate-150 p-3 rounded-xl hover:bg-slate-50 transition-colors">
+                  <div className="flex-1 truncate pr-3">
+                    <h5 className="text-sm font-bold text-slate-800 truncate">{project.title}</h5>
+                    <p className="text-[10px] text-slate-450 uppercase font-semibold mt-0.5">{project.category} build</p>
+                  </div>
                   <button
-                    type="button"
-                    onClick={() => removePhrase(idx)}
-                    className="p-2 border border-red-200 bg-red-50 hover:bg-red-500 text-red-650 hover:text-white rounded-xl transition-all shrink-0 cursor-pointer"
+                    onClick={() => handleCycleProjectProgress(project._id!, status)}
+                    disabled={isUpdatingProject}
+                    className={`text-xs font-bold px-3 py-1 rounded-full cursor-pointer transition-all active:scale-95 ${
+                      status === 'Completed'
+                        ? 'bg-emerald-50 text-emerald-650 border border-emerald-200'
+                        : status === 'In Progress'
+                        ? 'bg-orange-50 text-orange-600 border border-orange-200'
+                        : 'bg-slate-100 text-slate-600 border border-slate-250'
+                    }`}
                   >
-                    🗑
+                    {status}
                   </button>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        </div>
+        </div> */}
 
-        {/* Right Col: Stats & Contacts */}
-        <div className="space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Contact Details</h3>
-            
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Full Name</label>
-              <input
-                type="text"
-                value={formData.contact.name}
-                onChange={(e) => handleContactChange('name', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                required
-              />
-            </div>
+        {/* Technical Skills Chart */}
+        {/* <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
+          <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+            <span>⚙️</span> Skills Rating Index
+          </h3>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Email Address</label>
-              <input
-                type="email"
-                value={formData.contact.email}
-                onChange={(e) => handleContactChange('email', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                required
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</label>
-              <input
-                type="text"
-                value={formData.contact.phone}
-                onChange={(e) => handleContactChange('phone', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                required
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Location</label>
-              <input
-                type="text"
-                value={formData.contact.location}
-                onChange={(e) => handleContactChange('location', e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                required
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Available for Hire</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.contact.available}
-                  onChange={(e) => handleContactChange('available', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
-              </label>
-            </div>
+          <div className="space-y-3.5 max-h-[320px] overflow-y-auto pr-1">
+            {portfolioData.skills.map((skill, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-xs font-bold text-slate-700">
+                  <span>{skill.name}</span>
+                  <span>{skill.level}</span>
+                </div>
+                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                  <div className="bg-orange-500 h-full rounded-full transition-all" style={{ width: skill.level }}></div>
+                </div>
+              </div>
+            ))}
           </div>
+        </div> */}
+      </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">Hero Panel Stats</h3>
-            
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Experience (Years)</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.stats.yearsExperience}
-                  onChange={(e) => handleStatChange('yearsExperience', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Projects Shipped</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.stats.projectsShipped}
-                  onChange={(e) => handleStatChange('projectsShipped', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tech Stacks</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.stats.techStacks}
-                  onChange={(e) => handleStatChange('techStacks', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Curiosity Rating</label>
-                <input
-                  type="text"
-                  value={formData.aboutMe.stats.curiosity}
-                  onChange={(e) => handleStatChange('curiosity', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
-                  required
-                />
-              </div>
-            </div>
+      {/* Bottom Inbox Messages list */}
+      <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm space-y-4">
+        <h3 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+          <span>✉️</span> Recent Client Inquiries
+        </h3>
+
+        {loadingMessages ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
           </div>
-        </div>
-      </form>
+        ) : messages.length === 0 ? (
+          <div className="text-center py-8 text-slate-400 text-sm">
+            No inbound messages available yet.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {messages.slice(0, 4).map((msg) => (
+              <div key={msg._id} className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                msg.isRead 
+                  ? 'bg-slate-50/50 border-slate-150 text-slate-750' 
+                  : 'bg-orange-50/15 border-orange-100 text-slate-800 ring-1 ring-orange-100/50'
+              }`}>
+                <div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-bold border-b border-slate-100 pb-1.5 mb-2">
+                    <span>Sent: {new Date(msg.createdAt).toLocaleString()}</span>
+                    {!msg.isRead ? (
+                      <span className="text-[9px] bg-orange-600 text-white font-extrabold px-2 py-0.5 rounded-full select-none">NEW</span>
+                    ) : (
+                      <span className="text-[9px] bg-slate-100 text-slate-400 font-bold px-2 py-0.5 rounded-full">READ</span>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-slate-800 text-sm">{msg.name}</h4>
+                  <p className="text-xs text-slate-500 truncate mb-2">{msg.email}</p>
+                  <p className="text-xs font-semibold text-slate-650 bg-slate-50 p-2 rounded-lg border border-slate-150 line-clamp-3 leading-relaxed mb-3">
+                    <span className="text-[10px] block font-bold text-slate-400 uppercase tracking-widest mb-0.5">Subject: {msg.subject}</span>
+                    {msg.message}
+                  </p>
+                </div>
+                
+                {!msg.isRead && (
+                  <button
+                    onClick={() => handleMarkMessageRead(msg._id)}
+                    className="self-start text-[10px] font-bold bg-white hover:bg-slate-150 border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg shadow-sm hover:border-slate-300 transition-all cursor-pointer"
+                  >
+                    Mark as Read ✓
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

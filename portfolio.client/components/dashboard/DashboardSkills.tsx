@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
 
 interface OutletContextType {
   portfolioData: PortfolioData;
@@ -15,9 +16,8 @@ interface SkillType {
 
 export const DashboardSkills = () => {
   const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
+  const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
 
   const [skills, setSkills] = useState<SkillType[]>([...portfolioData.skills]);
   const [tools, setTools] = useState<string[]>([...portfolioData.tools]);
@@ -30,11 +30,14 @@ export const DashboardSkills = () => {
     if (newSkill.name.trim()) {
       setSkills(prev => [...prev, { name: newSkill.name.trim(), level: newSkill.level }]);
       setNewSkill({ name: '', level: '85%' });
+      showToast(`Skill "${newSkill.name.trim()}" added to list (unsaved)`);
     }
   };
 
   const handleRemoveSkill = (idx: number) => {
+    const removed = skills[idx];
     setSkills(prev => prev.filter((_, i) => i !== idx));
+    showToast(`Skill "${removed.name}" removed from list (unsaved)`);
   };
 
   const handleSkillLevelChange = (idx: number, level: string) => {
@@ -45,18 +48,18 @@ export const DashboardSkills = () => {
     e.preventDefault();
     if (newTool.trim() && !tools.includes(newTool.trim())) {
       setTools(prev => [...prev, newTool.trim()]);
+      showToast(`Tool "${newTool.trim()}" added to list (unsaved)`);
       setNewTool('');
     }
   };
 
   const handleRemoveTool = (tool: string) => {
     setTools(prev => prev.filter(t => t !== tool));
+    showToast(`Tool "${tool}" removed from list (unsaved)`);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
       const response = await portfolioAPIService.updatePortfolioData({
@@ -65,13 +68,13 @@ export const DashboardSkills = () => {
       });
 
       if (response.success) {
-        setSuccessMsg('Skills and tools updated successfully!');
+        showToast('Skills and tools configurations saved successfully!', 'success');
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to save changes');
+        showToast(response.messages?.[0] || 'Failed to save changes', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -82,7 +85,7 @@ export const DashboardSkills = () => {
       <div className="flex items-center justify-between border-b border-slate-200 pb-5">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Skills & Tech Stack Tools</h1>
-          <p className="text-sm text-slate-500">Manage technical stack languages and tools displayed on your profile.</p>
+          <p className="text-sm text-slate-505">Manage technical stack languages and tools displayed on your profile.</p>
         </div>
         <button
           onClick={handleSave}
@@ -92,18 +95,6 @@ export const DashboardSkills = () => {
           {isSaving ? 'Saving Changes...' : 'Save Skills & Tools'}
         </button>
       </div>
-
-      {successMsg && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
-          {successMsg}
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3.5 bg-red-50 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Skills Section */}
@@ -150,7 +141,7 @@ export const DashboardSkills = () => {
                   <select
                     value={skill.level}
                     onChange={(e) => handleSkillLevelChange(idx, e.target.value)}
-                    className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-700"
+                    className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-705"
                   >
                     {[...Array(11).keys()].map(i => {
                       const percent = `${i * 10}%`;

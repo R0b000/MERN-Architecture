@@ -32,6 +32,7 @@ const ProjectSchema = new mongoose.Schema({
   imageUrl: { type: String, default: '' },
   githubUrl: { type: String, default: '' },
   liveUrl: { type: String, default: '' },
+  progress: { type: String, default: 'Completed' }, // "Planning", "In Progress", "Completed"
 });
 
 const PortfolioSchema = new mongoose.Schema(
@@ -62,6 +63,11 @@ const PortfolioSchema = new mongoose.Schema(
     experience: [ExperienceSchema],
     projects: [ProjectSchema],
     marquee: [{ type: String }],
+    analytics: {
+      views: { type: Number, default: 0 },
+      hireMeClicks: { type: Number, default: 0 },
+      projectClicks: { type: Number, default: 0 }
+    },
     contact: {
       name: { type: String, default: 'Bijaya Kingring' },
       role: { type: String, default: 'Full Stack Developer' },

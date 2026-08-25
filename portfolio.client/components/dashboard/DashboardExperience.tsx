@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
+import { ConfirmModal } from '../modal/ConfirmModal';
 
 interface OutletContextType {
   portfolioData: PortfolioData;
@@ -17,13 +19,16 @@ interface ExperienceType {
 
 export const DashboardExperience = () => {
   const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
+  const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const [bulletInput, setBulletInput] = useState('');
 
   const [editingExperience, setEditingExperience] = useState<ExperienceType | null>(null);
   const [isNew, setIsNew] = useState(false);
+
+  // Custom Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [expToDeleteId, setExpToDeleteId] = useState<string | null>(null);
 
   const handleStartAdd = () => {
     setEditingExperience({
@@ -34,16 +39,12 @@ export const DashboardExperience = () => {
     });
     setIsNew(true);
     setBulletInput('');
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleStartEdit = (exp: ExperienceType) => {
     setEditingExperience({ ...exp });
     setIsNew(false);
     setBulletInput('');
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleFieldChange = (key: keyof ExperienceType, value: any) => {
@@ -67,28 +68,33 @@ export const DashboardExperience = () => {
     handleFieldChange('bulletPoints', editingExperience.bulletPoints.filter((_, i) => i !== idxToRemove));
   };
 
-  const handleDelete = async (expId: string) => {
-    if (!window.confirm('Are you sure you want to delete this experience entry?')) return;
+  const handleTriggerDelete = (expId: string) => {
+    setExpToDeleteId(expId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!expToDeleteId) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
-      const updatedExperience = portfolioData.experience.filter(e => e._id !== expId);
+      const updatedExperience = portfolioData.experience.filter(e => e._id !== expToDeleteId);
       const response = await portfolioAPIService.updatePortfolioData({
         experience: updatedExperience
       });
 
       if (response.success) {
-        setSuccessMsg('Experience entry deleted successfully!');
+        showToast('Experience entry deleted successfully!', 'success');
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to delete entry');
+        showToast(response.messages?.[0] || 'Failed to delete entry', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
+      setDeleteModalOpen(false);
+      setExpToDeleteId(null);
     }
   };
 
@@ -96,8 +102,6 @@ export const DashboardExperience = () => {
     e.preventDefault();
     if (!editingExperience) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
       let updatedExperience = [...portfolioData.experience];
@@ -113,14 +117,14 @@ export const DashboardExperience = () => {
       });
 
       if (response.success) {
-        setSuccessMsg(isNew ? 'Experience entry added successfully!' : 'Experience entry updated successfully!');
+        showToast(isNew ? 'Experience entry added successfully!' : 'Experience entry updated successfully!', 'success');
         setEditingExperience(null);
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to save entry');
+        showToast(response.messages?.[0] || 'Failed to save entry', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -142,18 +146,6 @@ export const DashboardExperience = () => {
           </button>
         )}
       </div>
-
-      {successMsg && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
-          {successMsg}
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3.5 bg-red-50 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
 
       {editingExperience ? (
         <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
@@ -258,7 +250,7 @@ export const DashboardExperience = () => {
                   <div>
                     <span className="text-xs font-bold text-orange-605 uppercase tracking-wider">{exp.period}</span>
                     <h4 className="text-lg font-bold text-slate-900 leading-tight">{exp.role}</h4>
-                    <p className="text-slate-500 text-sm mt-0.5">{exp.company}</p>
+                    <p className="text-slate-550 text-sm mt-0.5">{exp.company}</p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -268,8 +260,8 @@ export const DashboardExperience = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(exp._id!)}
-                      className="bg-red-50 border border-red-200 hover:bg-red-500 hover:text-white text-red-650 text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
+                      onClick={() => handleTriggerDelete(exp._id!)}
+                      className="bg-red-50 border border-red-200 hover:bg-red-500 hover:text-white text-red-655 text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
                     >
                       Delete
                     </button>
@@ -286,6 +278,18 @@ export const DashboardExperience = () => {
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete Professional Experience"
+        message="Are you sure you want to delete this experience entry? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setExpToDeleteId(null);
+        }}
+      />
     </div>
   );
 };

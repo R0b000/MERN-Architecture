@@ -35,6 +35,7 @@ export interface ProjectEntry {
   imageUrl: string;
   githubUrl: string;
   liveUrl: string;
+  progress?: string;
 }
 
 export interface Portfolio {
@@ -65,6 +66,11 @@ export interface Portfolio {
   experience: ExperienceEntry[];
   projects: ProjectEntry[];
   marquee: string[];
+  analytics?: {
+    views: number;
+    hireMeClicks: number;
+    projectClicks: number;
+  };
   contact: {
     name: string;
     role: string;

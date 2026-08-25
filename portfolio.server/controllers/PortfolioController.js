@@ -57,6 +57,45 @@ router.get('/messages', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/analytics/hire', async (req, res) => {
+  try {
+    const response = await portfolioService.incrementHireMeClicks();
+    res.status(response.statusCode || 200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      messages: ['Failed to increment hire me clicks'],
+      errors: [error.message],
+    });
+  }
+});
+
+router.post('/analytics/project', async (req, res) => {
+  try {
+    const response = await portfolioService.incrementProjectClicks();
+    res.status(response.statusCode || 200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      messages: ['Failed to increment project clicks'],
+      errors: [error.message],
+    });
+  }
+});
+
+router.put('/messages/:id/read', authMiddleware, async (req, res) => {
+  try {
+    const response = await portfolioService.markMessageAsRead(req.params.id);
+    res.status(response.statusCode || 200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      messages: ['Failed to mark message as read'],
+      errors: [error.message],
+    });
+  }
+});
+
 const portfolioRouter = router;
 
 module.exports = { portfolioRouter, router };

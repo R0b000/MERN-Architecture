@@ -48,5 +48,25 @@ export const useMessages = () => {
     }
   };
 
-  return { messages, isLoading, isPending, errorMsg, fetchMessages, sendMessage };
+  const markAsRead = async (id: string) => {
+    setIsPending(true);
+    setErrorMsg(null);
+    try {
+      const response = await portfolioAPIService.markMessageAsRead(id);
+      if (response.success && response.data) {
+        setMessages(prev => prev.map(m => m._id === id ? { ...m, isRead: true } : m));
+        return response.data;
+      } else {
+        setErrorMsg(response.messages?.[0] || 'Failed to mark message as read');
+        return null;
+      }
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Network error occurred');
+      return null;
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  return { messages, isLoading, isPending, errorMsg, fetchMessages, sendMessage, markAsRead };
 };

@@ -103,7 +103,8 @@ export const PortfolioLayout = () => {
   };
 
   const navItems = [
-    { to: '/dashboard', label: 'OVERVIEW', icon: '📊', end: true },
+    { to: '/dashboard', label: 'DASHBOARD', icon: '📊', end: true },
+    { to: '/dashboard/profile', label: 'PROFILE', icon: '👤' },
     { to: '/dashboard/projects', label: 'PROJECTS', icon: '📁' },
     { to: '/dashboard/education', label: 'EDUCATION', icon: '🎓' },
     { to: '/dashboard/experience', label: 'EXPERIENCE', icon: '💼' },

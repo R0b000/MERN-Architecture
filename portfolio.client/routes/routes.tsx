@@ -7,6 +7,7 @@ import { PortfolioHomePage } from '../components/home/PortfolioHomePage';
 // Lazy Loaded Layout & Dashboard components
 const PortfolioLayout = React.lazy(() => import('../components/layout/PortfolioLayout'));
 const DashboardOverview = React.lazy(() => import('../components/dashboard/DashboardOverview'));
+const DashboardProfile = React.lazy(() => import('../components/dashboard/DashboardProfile'));
 const DashboardProjects = React.lazy(() => import('../components/dashboard/DashboardProjects'));
 const DashboardEducation = React.lazy(() => import('../components/dashboard/DashboardEducation'));
 const DashboardExperience = React.lazy(() => import('../components/dashboard/DashboardExperience'));
@@ -25,6 +26,7 @@ export const PortfolioRoutes = {
       element: PortfolioLayout,
       children: [
         { index: true, element: DashboardOverview },
+        { path: 'profile', element: DashboardProfile },
         { path: 'projects', element: DashboardProjects },
         { path: 'education', element: DashboardEducation },
         { path: 'experience', element: DashboardExperience },

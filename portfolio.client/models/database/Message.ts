@@ -4,6 +4,7 @@ export interface Message {
   email: string;
   subject: string;
   message: string;
+  isRead?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

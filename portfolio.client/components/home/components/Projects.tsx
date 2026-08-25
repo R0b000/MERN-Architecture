@@ -12,9 +12,10 @@ interface ProjectItem {
 
 interface ProjectsProps {
   projects: ProjectItem[];
+  onProjectClick?: () => void;
 }
 
-export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
+export const Projects: React.FC<ProjectsProps> = ({ projects, onProjectClick }) => {
   const academicProjects = projects.filter(p => p.category === 'academic');
   const otherProjects = projects.filter(p => p.category === 'other');
 
@@ -52,8 +53,8 @@ export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
                       <h4 className="text-xl font-bold mb-2">{project.title}</h4>
                       <p className="text-sm text-white/60 mb-4">{project.description}</p>
                       <div className="flex gap-4">
-                        {project.githubUrl && <a href={project.githubUrl} className="text-xs text-white hover:underline">GitHub →</a>}
-                        {project.liveUrl && <a href={project.liveUrl} className="text-xs text-white hover:underline">Live →</a>}
+                        {project.githubUrl && <a href={project.githubUrl} onClick={onProjectClick} target="_blank" rel="noreferrer" className="text-xs text-white hover:underline">GitHub →</a>}
+                        {project.liveUrl && <a href={project.liveUrl} onClick={onProjectClick} target="_blank" rel="noreferrer" className="text-xs text-white hover:underline">Live →</a>}
                       </div>
                     </div>
                   </div>
@@ -85,8 +86,8 @@ export const Projects: React.FC<ProjectsProps> = ({ projects }) => {
                       <h4 className="text-lg font-bold mb-2">{project.title}</h4>
                       <p className="text-xs text-white/60 mb-3">{project.description}</p>
                       <div className="flex gap-4">
-                        {project.githubUrl && <a href={project.githubUrl} className="text-xs text-white hover:underline">GitHub →</a>}
-                        {project.liveUrl && <a href={project.liveUrl} className="text-xs text-white hover:underline">Live →</a>}
+                        {project.githubUrl && <a href={project.githubUrl} onClick={onProjectClick} target="_blank" rel="noreferrer" className="text-xs text-white hover:underline">GitHub →</a>}
+                        {project.liveUrl && <a href={project.liveUrl} onClick={onProjectClick} target="_blank" rel="noreferrer" className="text-xs text-white hover:underline">Live →</a>}
                       </div>
                     </div>
                   </div>

@@ -1,7 +1,8 @@
-const { Portfolio } = require('../models/database/Portfolio');
-const { Message } = require('../models/database/Message');
-const { Response } = require('../../Shared/API/wrappers/Response');
-const { config } = require('../../Shared/API/config/config');
+require('dotenv').config();
+const { connectDatabase } = require('./Shared/API/config/Database.config');
+const { Portfolio } = require('./portfolio.server/models/database/Portfolio');
+const { User } = require('./auth.server/models/database/User');
+const bcrypt = require('bcryptjs');
 
 const defaultPortfolioData = {
   aboutMe: {
@@ -161,94 +162,49 @@ const defaultPortfolioData = {
   },
 };
 
-class PortfolioService {
-  async getPortfolioData() {
-    try {
-      let portfolio = await Portfolio.findOne().exec();
-      if (!portfolio) {
-        console.log('[PortfolioService] No portfolio data found. Seeding database with defaults...');
-        portfolio = await Portfolio.create(defaultPortfolioData);
-      } else {
-        portfolio = await Portfolio.findByIdAndUpdate(portfolio._id, { $inc: { 'analytics.views': 1 } }, { new: true }).exec();
-      }
-      return Response.success(portfolio, ['Portfolio data retrieved successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.getPortfolioData] Error:', error);
-      return Response.fail('Failed to fetch portfolio data', [error.message], 500);
-    }
-  }
+const seed = async () => {
+  try {
+    console.log('Connecting to database...');
+    await connectDatabase();
 
-  async updatePortfolioData(data) {
-    try {
-      let portfolio = await Portfolio.findOne().exec();
-      if (!portfolio) {
-        portfolio = await Portfolio.create({ ...defaultPortfolioData, ...data });
-      } else {
-        portfolio = await Portfolio.findByIdAndUpdate(portfolio._id, data, { new: true }).exec();
-      }
-      return Response.success(portfolio, ['Portfolio data updated successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.updatePortfolioData] Error:', error);
-      return Response.fail('Failed to update portfolio data', [error.message], 500);
+    // 1. Seed Portfolio
+    console.log('Checking portfolio details...');
+    const portfolioCount = await Portfolio.countDocuments();
+    if (portfolioCount === 0) {
+      console.log('Inserting default portfolio details...');
+      await Portfolio.create(defaultPortfolioData);
+      console.log('Portfolio details inserted successfully!');
+    } else {
+      console.log('Portfolio data already exists in database.');
     }
-  }
 
-  async saveMessage(data) {
-    try {
-      const { name, email, subject, message } = data;
-      if (!name || !email || !subject || !message) {
-        return Response.fail('Missing required fields', [], 400);
-      }
-      const newMessage = await Message.create({ name, email, subject, message });
-      return Response.success(newMessage, ['Message sent successfully'], 201);
-    } catch (error) {
-      console.error('[PortfolioService.saveMessage] Error:', error);
-      return Response.fail('Failed to send message', [error.message], 500);
+    // 2. Seed Admin User
+    console.log('Checking default admin user...');
+    const adminEmail = 'bijaya@himalaya.com';
+    const userExists = await User.findOne({ email: adminEmail });
+    if (!userExists) {
+      console.log('Creating default admin user...');
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('password123', salt);
+      await User.create({
+        email: adminEmail,
+        password: hashedPassword,
+        firstName: 'Bijaya',
+        lastName: 'Kingring',
+        role: 'admin',
+        isActive: true,
+      });
+      console.log(`Admin user created successfully! Credentials:\nEmail: ${adminEmail}\nPassword: password123`);
+    } else {
+      console.log(`Admin user '${adminEmail}' already exists.`);
     }
-  }
 
-  async getMessages() {
-    try {
-      const messages = await Message.find().sort({ createdAt: -1 }).exec();
-      return Response.success(messages, ['Messages retrieved successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.getMessages] Error:', error);
-      return Response.fail('Failed to fetch messages', [error.message], 500);
-    }
+    console.log('Database seeding process completed successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('Error during seeding database:', error);
+    process.exit(1);
   }
+};
 
-  async incrementHireMeClicks() {
-    try {
-      const portfolio = await Portfolio.findOneAndUpdate({}, { $inc: { 'analytics.hireMeClicks': 1 } }, { new: true }).exec();
-      return Response.success(portfolio, ['Incremented hire me count successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.incrementHireMeClicks] Error:', error);
-      return Response.fail('Failed to increment hire me count', [error.message], 500);
-    }
-  }
-
-  async incrementProjectClicks() {
-    try {
-      const portfolio = await Portfolio.findOneAndUpdate({}, { $inc: { 'analytics.projectClicks': 1 } }, { new: true }).exec();
-      return Response.success(portfolio, ['Incremented project count successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.incrementProjectClicks] Error:', error);
-      return Response.fail('Failed to increment project count', [error.message], 500);
-    }
-  }
-
-  async markMessageAsRead(messageId) {
-    try {
-      const message = await Message.findByIdAndUpdate(messageId, { isRead: true }, { new: true }).exec();
-      if (!message) {
-        return Response.fail('Message not found', [], 404);
-      }
-      return Response.success(message, ['Message marked as read successfully']);
-    } catch (error) {
-      console.error('[PortfolioService.markMessageAsRead] Error:', error);
-      return Response.fail('Failed to mark message as read', [error.message], 500);
-    }
-  }
-}
-
-module.exports = { PortfolioService };
+seed();

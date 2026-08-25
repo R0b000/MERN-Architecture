@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { portfolioAPIService, PortfolioData } from '../../services/PortfolioAPIService';
+import { useToast } from '../toast/ToastContext';
+import { ConfirmModal } from '../modal/ConfirmModal';
 
 interface OutletContextType {
   portfolioData: PortfolioData;
@@ -16,17 +18,22 @@ interface ProjectType {
   imageUrl: string;
   githubUrl: string;
   liveUrl: string;
+  progress?: string;
 }
 
 export const DashboardProjects = () => {
   const { portfolioData, refreshData } = useOutletContext<OutletContextType>();
+  const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const [tagInput, setTagInput] = useState('');
 
+  // Selected project for editing. If null, we are showing the list.
   const [editingProject, setEditingProject] = useState<ProjectType | null>(null);
   const [isNew, setIsNew] = useState(false);
+
+  // Custom Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [projectToDeleteId, setProjectToDeleteId] = useState<string | null>(null);
 
   const handleStartAdd = () => {
     setEditingProject({
@@ -40,16 +47,12 @@ export const DashboardProjects = () => {
     });
     setIsNew(true);
     setTagInput('');
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleStartEdit = (project: ProjectType) => {
     setEditingProject({ ...project });
     setIsNew(false);
     setTagInput('');
-    setSuccessMsg('');
-    setErrorMsg('');
   };
 
   const handleFieldChange = (key: keyof ProjectType, value: any) => {
@@ -75,28 +78,33 @@ export const DashboardProjects = () => {
     handleFieldChange('tags', editingProject.tags.filter(t => t !== tagToRemove));
   };
 
-  const handleDelete = async (projectId: string) => {
-    if (!window.confirm('Are you sure you want to delete this project?')) return;
+  const handleTriggerDelete = (projectId: string) => {
+    setProjectToDeleteId(projectId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!projectToDeleteId) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
-      const updatedProjects = portfolioData.projects.filter(p => p._id !== projectId);
+      const updatedProjects = portfolioData.projects.filter(p => p._id !== projectToDeleteId);
       const response = await portfolioAPIService.updatePortfolioData({
         projects: updatedProjects
       });
 
       if (response.success) {
-        setSuccessMsg('Project deleted successfully!');
+        showToast('Project deleted successfully!', 'success');
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to delete project');
+        showToast(response.messages?.[0] || 'Failed to delete project', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
+      setDeleteModalOpen(false);
+      setProjectToDeleteId(null);
     }
   };
 
@@ -104,8 +112,6 @@ export const DashboardProjects = () => {
     e.preventDefault();
     if (!editingProject) return;
     setIsSaving(true);
-    setErrorMsg('');
-    setSuccessMsg('');
 
     try {
       let updatedProjects = [...portfolioData.projects];
@@ -121,14 +127,14 @@ export const DashboardProjects = () => {
       });
 
       if (response.success) {
-        setSuccessMsg(isNew ? 'Project created successfully!' : 'Project updated successfully!');
+        showToast(isNew ? 'Project created successfully!' : 'Project updated successfully!', 'success');
         setEditingProject(null);
         await refreshData();
       } else {
-        setErrorMsg(response.messages?.[0] || 'Failed to save project');
+        showToast(response.messages?.[0] || 'Failed to save project', 'error');
       }
     } catch (err) {
-      setErrorMsg('A network error occurred');
+      showToast('A network error occurred', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -152,18 +158,6 @@ export const DashboardProjects = () => {
         )}
       </div>
 
-      {successMsg && (
-        <div className="p-3.5 bg-emerald-55 border border-emerald-200 text-emerald-600 rounded-xl text-sm font-semibold">
-          {successMsg}
-        </div>
-      )}
-
-      {errorMsg && (
-        <div className="p-3.5 bg-red-55 border border-red-200 text-red-655 rounded-xl text-sm font-semibold">
-          {errorMsg}
-        </div>
-      )}
-
       {/* Editing Form */}
       {editingProject ? (
         <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-sm">
@@ -171,9 +165,9 @@ export const DashboardProjects = () => {
             {isNew ? 'Create Project Showcase' : 'Edit Project Details'}
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Project Title</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Project Title</label>
               <input
                 type="text"
                 value={editingProject.title}
@@ -183,7 +177,7 @@ export const DashboardProjects = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</label>
+              <label className="text-xs font-semibold text-slate-555 uppercase tracking-wider">Category</label>
               <select
                 value={editingProject.category}
                 onChange={(e) => handleFieldChange('category', e.target.value)}
@@ -193,10 +187,22 @@ export const DashboardProjects = () => {
                 <option value="other">Personal / Practical Dev</option>
               </select>
             </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-slate-555 uppercase tracking-wider">Project Progress</label>
+              <select
+                value={editingProject.progress || 'Completed'}
+                onChange={(e) => handleFieldChange('progress', e.target.value)}
+                className="w-full bg-slate-55 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all"
+              >
+                <option value="Planning">Planning</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</label>
+            <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Description</label>
             <textarea
               rows={4}
               value={editingProject.description}
@@ -208,7 +214,7 @@ export const DashboardProjects = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Image Link URL</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Image Link URL</label>
               <input
                 type="text"
                 value={editingProject.imageUrl}
@@ -218,7 +224,7 @@ export const DashboardProjects = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">GitHub Link URL</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">GitHub Link URL</label>
               <input
                 type="text"
                 value={editingProject.githubUrl}
@@ -228,7 +234,7 @@ export const DashboardProjects = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Live Deploy URL</label>
+              <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider">Live Deploy URL</label>
               <input
                 type="text"
                 value={editingProject.liveUrl}
@@ -241,10 +247,10 @@ export const DashboardProjects = () => {
 
           {/* Tags Section */}
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Tech Tags (Press Enter to add)</label>
+            <label className="text-xs font-semibold text-slate-505 uppercase tracking-wider block">Tech Tags (Press Enter to add)</label>
             <div className="flex flex-wrap gap-2 mb-2">
               {editingProject.tags.map((tag, idx) => (
-                <span key={idx} className="bg-orange-50 border border-orange-100 px-3 py-1 text-xs text-orange-650 font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
+                <span key={idx} className="bg-orange-50 border border-orange-100 px-3 py-1 text-xs text-orange-655 font-bold rounded-lg flex items-center gap-1.5 shadow-sm">
                   {tag}
                   <button type="button" onClick={() => handleRemoveTag(tag)} className="text-red-500 font-bold hover:text-red-400 focus:outline-none">×</button>
                 </span>
@@ -297,7 +303,7 @@ export const DashboardProjects = () => {
                     </span>
                   </div>
                   <h4 className="text-lg font-bold text-slate-900">{project.title}</h4>
-                  <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed">{project.description}</p>
+                  <p className="text-slate-505 text-sm line-clamp-3 leading-relaxed">{project.description}</p>
                   
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {project.tags.map((t, i) => (
@@ -308,7 +314,7 @@ export const DashboardProjects = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-5 pt-0 flex gap-2.5 border-t border-slate-100 mt-auto">
+              <div className="p-5 pt-0 flex gap-2.5 border-t border-slate-105 mt-auto">
                 <button
                   onClick={() => handleStartEdit(project)}
                   className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold py-2 rounded-xl transition-all border border-slate-200 cursor-pointer"
@@ -316,8 +322,8 @@ export const DashboardProjects = () => {
                   Edit Details
                 </button>
                 <button
-                  onClick={() => handleDelete(project._id!)}
-                  className="bg-red-50 border border-red-200 hover:bg-red-550 text-red-650 hover:bg-red-500 hover:text-white text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
+                  onClick={() => handleTriggerDelete(project._id!)}
+                  className="bg-red-50 border border-red-200 hover:bg-red-500 hover:text-white text-red-650 text-xs font-bold py-2 px-4 rounded-xl transition-all cursor-pointer"
                 >
                   Delete
                 </button>
@@ -326,6 +332,18 @@ export const DashboardProjects = () => {
           ))}
         </div>
       )}
+
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete Project Showcase"
+        message="Are you sure you want to permanently delete this project from your portfolio? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setDeleteModalOpen(false);
+          setProjectToDeleteId(null);
+        }}
+      />
     </div>
   );
 };

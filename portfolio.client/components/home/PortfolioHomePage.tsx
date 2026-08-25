@@ -114,6 +114,22 @@ export const PortfolioHomePage = () => {
     }
   };
 
+  const handleHireMeClick = async () => {
+    try {
+      await portfolioAPIService.incrementHireMeClicks();
+    } catch (err) {
+      console.error('Failed to increment hire me count', err);
+    }
+  };
+
+  const handleProjectClick = async () => {
+    try {
+      await portfolioAPIService.incrementProjectClicks();
+    } catch (err) {
+      console.error('Failed to increment project clicks', err);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black text-[#f5f5f5] flex items-center justify-center font-mono">
@@ -150,6 +166,7 @@ export const PortfolioHomePage = () => {
         setMobileMenuOpen={setMobileMenuOpen}
         onNavigateToLogin={() => navigate('/login')}
         handleSmoothScroll={handleSmoothScroll}
+        onHireMeClick={handleHireMeClick}
       />
 
       <Hero
@@ -177,7 +194,7 @@ export const PortfolioHomePage = () => {
 
       <Experience experience={portfolioData.experience} />
 
-      <Projects projects={portfolioData.projects} />
+      <Projects projects={portfolioData.projects} onProjectClick={handleProjectClick} />
 
       <Contact
         contact={portfolioData.contact}
