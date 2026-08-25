@@ -29,7 +29,7 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 md:p-6 select-none font-sans">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 md:p-6 select-none font-sans">
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[550px]">
         {/* Left Side: Brand & Visuals */}
         <div className="hidden md:flex md:col-span-5 bg-gradient-to-br from-orange-50 via-slate-50 to-orange-100/50 p-8 flex-col justify-between border-r border-slate-100 relative overflow-hidden">
