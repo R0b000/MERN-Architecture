@@ -33,8 +33,15 @@ export const DashboardMessages = () => {
     }
   };
 
+  // Poll messages silently every 10 seconds
   useEffect(() => {
     fetchMessages(true);
+
+    const interval = setInterval(() => {
+      fetchMessages(true);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
