@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import type { LoginFormProps } from './LoginForm.types';
 
-export const LoginForm = ({ onSubmit, isLoading, error }: LoginFormProps) => {
+export const LoginForm = ({ onSubmit, onSubmitFido2, isLoading, error, onRegisterClick }: LoginFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [infoNotice, setInfoNotice] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.({ email, password });
+  };
+
+  const handleFido2Click = () => {
+    if (onSubmitFido2) {
+      onSubmitFido2();
+    } else {
+      setInfoNotice('FIDO2/Passkey authentication (.NET backend) integration is in progress.');
+      setTimeout(() => setInfoNotice(null), 5000);
+    }
   };
 
   return (
@@ -109,6 +119,16 @@ export const LoginForm = ({ onSubmit, isLoading, error }: LoginFormProps) => {
         </div>
       )}
 
+      {/* FIDO2 Status Notice */}
+      {infoNotice && (
+        <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-2.5 text-blue-600 text-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 shrink-0 mt-0.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.086 1.086L12.5 13.5H13.75a.75.75 0 010 1.5H12a.75.75 0 01-.743-.648L11.25 11.25zM12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25z" />
+          </svg>
+          <span className="font-medium">{infoNotice}</span>
+        </div>
+      )}
+
       {/* Submit Button */}
       <button
         type="submit"
@@ -127,6 +147,45 @@ export const LoginForm = ({ onSubmit, isLoading, error }: LoginFormProps) => {
           <span>Sign In</span>
         )}
       </button>
+
+      {/* Divider */}
+      <div className="relative flex items-center justify-center my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-slate-200"></div>
+        </div>
+        <span className="relative px-3 bg-white text-xs text-slate-400 font-medium uppercase tracking-wider">
+          Or Secure Access
+        </span>
+      </div>
+
+      {/* FIDO2 Passkey Login Button */}
+      <button
+        type="button"
+        onClick={handleFido2Click}
+        disabled={isLoading}
+        className="w-full bg-white hover:bg-slate-50 text-slate-700 font-semibold py-2.5 px-4 border border-slate-200 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow active:scale-[0.98]"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-orange-500">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7.864 16.47a4.5 4.5 0 0 0 8.272-2.122v-1.878a1.5 1.5 0 1 0-3 0v1.878a1.5 1.5 0 0 1-3 0v-1.878a4.5 4.5 0 0 1 9 0v1.878a7.5 7.5 0 0 1-15 0v-1.878a10.5 10.5 0 0 1 21 0v1.878" />
+        </svg>
+        <span>Sign in with Passkey / FIDO2</span>
+      </button>
+
+      {/* Sign Up Navigation link */}
+      {onRegisterClick && (
+        <div className="text-center mt-6">
+          <p className="text-sm text-slate-500">
+            Don't have an account?{' '}
+            <button
+              type="button"
+              onClick={onRegisterClick}
+              className="font-semibold text-orange-600 hover:text-orange-500 hover:underline transition-colors focus:outline-none"
+            >
+              Sign Up
+            </button>
+          </p>
+        </div>
+      )}
     </form>
   );
 };

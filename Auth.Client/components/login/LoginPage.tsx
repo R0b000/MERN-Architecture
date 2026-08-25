@@ -86,7 +86,7 @@ export const LoginPage = () => {
               <p className="text-slate-500 text-sm">Please sign in to access your administrative dashboard.</p>
             </div>
 
-            <LoginForm onSubmit={handleSubmit} isLoading={isPending} error={error} />
+            <LoginForm onSubmit={handleSubmit} isLoading={isPending} error={error} onRegisterClick={() => navigate('/register')} />
           </div>
         </div>
       </div>
