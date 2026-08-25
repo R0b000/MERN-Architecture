@@ -15,7 +15,7 @@ const connectDatabase = async () => {
     return connection;
   } catch (error) {
     console.error(`[Auth.Server] Failed to connect to Atlas MongoDB: ${error.message}`);
-    const localURI = 'mongodb://127.0.0.1:27017/auth-server';
+    const localURI = 'mongodb://127.0.0.1:27017/portfolio';
     console.log(`[Auth.Server] Attempting fallback to local MongoDB: ${localURI}`);
     const connection = await mongoose.connect(localURI);
     cachedConnection = connection;

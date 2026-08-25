@@ -60,6 +60,22 @@ export const PortfolioHomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Guard variable to prevent React 18 StrictMode double-mount calls
+  useEffect(() => {
+    // Check if view has already been logged in this session load
+    if ((window as any).__viewLogged) return;
+    (window as any).__viewLogged = true;
+
+    const logView = async () => {
+      try {
+        await portfolioAPIService.incrementViews();
+      } catch (err) {
+        console.error('Failed to log page view', err);
+      }
+    };
+    logView();
+  }, []);
+
   // Intersection Observer for scroll animations
   useEffect(() => {
     if (isLoading || !portfolioData) return;
@@ -86,16 +102,24 @@ export const PortfolioHomePage = () => {
     return () => clearTimeout(timer);
   }, [isLoading, portfolioData]);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('> sending...');
-    setTimeout(() => {
-      setFormStatus('✓ message_sent_successfully');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const response = await portfolioAPIService.postMessage(formData);
+      if (response.success) {
+        setFormStatus('✓ message_sent_successfully');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setFormStatus(`✗ error: ${response.messages?.[0] || 'failed_to_send'}`);
+      }
+    } catch (err) {
+      setFormStatus('✗ error: network_connection_failed');
+    } finally {
       setTimeout(() => {
         setFormStatus('');
-      }, 3000);
-    }, 1200);
+      }, 4000);
+    }
   };
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -103,6 +127,22 @@ export const PortfolioHomePage = () => {
     const target = document.querySelector(targetId);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleHireMeClick = async () => {
+    try {
+      await portfolioAPIService.incrementHireMeClicks();
+    } catch (err) {
+      console.error('Failed to increment hire me count', err);
+    }
+  };
+
+  const handleProjectClick = async () => {
+    try {
+      await portfolioAPIService.incrementProjectClicks();
+    } catch (err) {
+      console.error('Failed to increment project clicks', err);
     }
   };
 
@@ -142,6 +182,7 @@ export const PortfolioHomePage = () => {
         setMobileMenuOpen={setMobileMenuOpen}
         onNavigateToLogin={() => navigate('/login')}
         handleSmoothScroll={handleSmoothScroll}
+        onHireMeClick={handleHireMeClick}
       />
 
       <Hero
@@ -169,7 +210,7 @@ export const PortfolioHomePage = () => {
 
       <Experience experience={portfolioData.experience} />
 
-      <Projects projects={portfolioData.projects} />
+      <Projects projects={portfolioData.projects} onProjectClick={handleProjectClick} />
 
       <Contact
         contact={portfolioData.contact}
