@@ -14,7 +14,16 @@ const {portfolioRouter} = require('./portfolio.server/controllers/PortfolioContr
 const app = express();
 const PORT = config.port || process.env.PORT || 5001;
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'data:', 'https:'],
+      },
+    },
+  })
+);
 app.use(
   cors({
     origin: config.clientURL,
